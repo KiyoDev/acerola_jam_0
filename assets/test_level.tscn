@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://cklc0ohha61y1"]
+
+[ext_resource type="PackedScene" uid="uid://5rxhnyxkr0ol" path="res://assets/player/player.tscn" id="1_684vv"]
+[ext_resource type="Texture2D" uid="uid://cy6ppah61n5xj" path="res://assets/16x16.png" id="1_kjm0k"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rut0w"]
+texture = ExtResource("1_kjm0k")
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[sub_resource type="TileSet" id="TileSet_bjg85"]
+physics_layer_0/collision_layer = 4
+sources/0 = SubResource("TileSetAtlasSource_rut0w")
+
+[node name="TileMap" type="TileMap"]
+tile_set = SubResource("TileSet_bjg85")
+format = 2
+layer_0/tile_data = PackedInt32Array(131070, 0, 0, 131071, 0, 0, 65536, 0, 0, 65537, 0, 0, -65537, 0, 0, -131072, 0, 0, 131073, 0, 0, 196609, 0, 0, 196610, 0, 0, 196611, 0, 0, 196612, 0, 0, 196613, 0, 0, 196606, 0, 0, 262142, 0, 0, 327678, 0, 0, 327677, 0, 0, 327676, 0, 0, 327675, 0, 0, 327674, 0, 0, 196605, 0, 0, 262141, 0, 0, 262140, 0, 0, -65533, 0, 0, -131068, 0, 0, 196614, 0, 0, 196615, 0, 0, 196616, 0, 0, 196617, 0, 0, 196618, 0, 0, 196619, 0, 0, 327673, 0, 0, 327672, 0, 0, 327671, 0, 0, 327670, 0, 0, 327669, 0, 0, -196603, 0, 0, -262138, 0, 0)
+metadata/_edit_lock_ = true
+
+[node name="Player" parent="." instance=ExtResource("1_684vv")]
+
+[node name="Camera2D" type="Camera2D" parent="."]
