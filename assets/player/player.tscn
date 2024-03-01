@@ -35,7 +35,3 @@ collision_mask = 24
 shape = SubResource("RectangleShape2D_8v6vo")
 
 [node name="animator" type="AnimationPlayer" parent="."]
-
-[node name="coyote_timer" type="Timer" parent="."]
-
-[node name="buffered_timer" type="Timer" parent="."]

@@ -10,12 +10,12 @@ enum Gravity {
 
 
 const SPEED := 120
-const JUMP_VELOCITY := -400
+const JUMP_VELOCITY := -360
 const MAX_VELOCITY := 400
 const MIN_VELOCITY := -500
 const COYOTE_FRAMES := 4
 const JUMP_BUFFER_FRAMES := 6
-const CORNER_CORRECTION := Vector2(9, 1)
+const CORNER_CORRECTION := Vector2(6, 1)
 
 
 @export var floor_cast : RayCast2D
@@ -90,7 +90,7 @@ func _physics_process(delta: float) -> void:
 func gravity_down(delta : float) -> void:
 	# Add the gravity.
 	if not is_on_floor():
-		velocity.y += gravity * delta
+		velocity.y += gravity * delta / 2
 	
 	if not is_on_floor():
 		crouching = false
@@ -98,7 +98,7 @@ func gravity_down(delta : float) -> void:
 		if coyote:
 			grav = 0
 		# let player hang a little more towards the peak of jump by reducing grav near peak
-		elif !jumping and -20 < velocity.y and velocity.y < 80:
+		elif !jumping and -20 < velocity.y and velocity.y < 100:
 			grav = gravity / 2
 		
 		velocity.y += grav * delta
@@ -121,49 +121,51 @@ func gravity_down(delta : float) -> void:
 			sprite.flip_h = true
 		else:
 			sprite.flip_h = false
-		animator.play(&"walking")
+		#animator.play(&"walking")
 		crouching = false
 	else:
 		if is_on_floor():
 			# Handle animations
 			if sign.y > 0 and !crouching:
-				animator.play(&"crouch")
+				#animator.play(&"crouch")
 				crouching = true
 			elif sign.y <= 0:
 				crouching = false
-				if animator.current_animation != &"idle":
-					animator.play(&"idle")
+				#if animator.current_animation != &"idle":
+					#animator.play(&"idle")
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
 	if velocity.y < 0: # rising up
 		animator.play(&"rising")
-		if test_move(transform, Vector2(0, velocity.y * delta)):
+		var test_vel := Vector2(0, velocity.y * delta)
+		if test_move(transform, test_vel):
 			# Check if head is getting blocked from left or right side when jumping
-			var dir_flags := corner_correction_direciton(delta, velocity.y * delta * 0.6)
+			# left = 0b01, right = 0b10
+			var dir_flags := corner_correction_direciton(delta, test_vel)
 			# If blocked in left or right direction, try to correct position
 			if 0 < dir_flags and dir_flags < 0b11:
 				# While player is blocked when trying to move in that direction, move 1 pixel out
 				var tmp_pos := position
-				print_debug("test vel=", velocity * delta * 0.6)
-				while test_move(transform, velocity * delta * 0.6):
+				while test_move(transform, test_vel):
 					position.x = roundi(position.x) + (1 if dir_flags == 0b01 else -1)
 					# if trying to move more than correction, then reset position to not teleport
 					if abs(tmp_pos.x - position.x) > 8:
 						position = tmp_pos
 						break
 	elif velocity.y > 0: # falling
-		animator.play(&"falling")
+		#animator.play(&"falling")
 		# Clamp velocity so doesn't infinitely accelerate
 		velocity.y = clamp(velocity.y, MIN_VELOCITY, MAX_VELOCITY)
 
 
+## Handles ticking timers for various physics routines; ex. coyote time and jump buffering
 func tick_timers() -> void:
 	if jump_buffered:
 		jump_buffer_t += 1
 		if jump_buffer_t == JUMP_BUFFER_FRAMES:
 			jump_buffered = false
 			jump_buffer_t = 0
-		
+	
 	if coyote:
 		coyote_t += 1
 		if coyote_t == COYOTE_FRAMES:
@@ -173,12 +175,11 @@ func tick_timers() -> void:
 
 func jump(consumed : bool) -> bool:
 	if !consumed and Input.is_action_just_pressed(&"jump") and !jumping_down and (is_on_floor() or coyote):
-	#if !consumed and Input.is_action_just_pressed(&"gj_jump") and !jumping_down and (is_on_floor() or coyote or phase_state & 0b1100 > 0):
 		#print_debug("is_on_floor() or coyote=%s, %s, %s" % [is_on_floor(), coyote, jumping_down])
 		jumping = true
 		#jump_sfx()
 		velocity.y = JUMP_VELOCITY - (velocity.y if coyote else 0)
-		animator.play(&"jump_up")
+		#animator.play(&"jump_up")
 		return true
 	return false
 
@@ -199,10 +200,9 @@ func buffered_jump() -> bool:
 	if Input.is_action_just_pressed("jump") and !jumping:
 		can_buffer = true
 	elif Input.is_action_pressed("jump") and !jumping and can_buffer:
-		# If holding jump when can buffer, start timer
+		# If holding jump when can buffer
 		if !is_on_floor() and !jump_buffered:
 			jump_buffered = true
-			#jump_buffer_timer.start(JUMP_BUFFER_TIME)
 		# If holding jump when hit ground within buffer timer, perform jump right as land
 		elif is_on_floor() and jump_buffered:
 			#jump_sfx()
@@ -214,13 +214,28 @@ func buffered_jump() -> bool:
 
 
 ## Return which side of the player is trying to go into the ceiling
-func corner_correction_direciton(delta : float, vel_y : float) -> int:
+func corner_correction_direciton(delta : float, vel : Vector2) -> int:
 	var dir_flags := 0 # left=0b01, right=0b10
-	if test_move(transform, Vector2(CORNER_CORRECTION.x, vel_y * delta)):
-		dir_flags |= 0b10
-	if test_move(transform, Vector2(-CORNER_CORRECTION.x, vel_y * delta)):
-		dir_flags |= 0b01
-	print_debug("vel_y=%s, %s" % [vel_y, dir_flags])
+	# check corners from furthest correction towards base position
+	# check left
+	for l in range(-CORNER_CORRECTION.x, 0):
+		var t := transform
+		t.origin.x += l
+		if test_move(t, vel):
+			dir_flags |= 0b01
+		else: # not blocked at some point along the path, so will not be blocked when corrected; break out of loop
+			dir_flags &= 0b10
+			break
+	# check right
+	for r in range(CORNER_CORRECTION.x, 0, -1):
+		var t := transform
+		t.origin.x += r
+		if test_move(t, vel):
+			dir_flags |= 0b10
+		else: # not blocked at some point along the path, so will not be blocked when corrected; break out of loop
+			dir_flags &= 0b01
+			break
+	print_debug("vel_y=%s, %s, %s" % [vel.y, transform, dir_flags])
 	return dir_flags
 
 
