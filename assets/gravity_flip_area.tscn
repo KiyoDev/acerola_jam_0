@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhhmtckihydds"]
+
+[ext_resource type="Script" path="res://scripts/gravity/GravityFlipArea.gd" id="1_n8nuk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0jswb"]
+size = Vector2(256, 256)
+
+[node name="Area2D" type="Area2D" node_paths=PackedStringArray("collider", "color_rect")]
+collision_layer = 32
+script = ExtResource("1_n8nuk")
+collider = NodePath("CollisionShape2D")
+color_rect = NodePath("ColorRect")
+size = Vector2i(64, 64)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0jswb")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -128.0
+offset_top = -128.0
+offset_right = 128.0
+offset_bottom = 128.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.607843, 0.00392157, 0.858824, 0.454902)
