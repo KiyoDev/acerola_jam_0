@@ -14,7 +14,7 @@ const JUMP_VELOCITY := -340
 const MAX_VELOCITY := 400
 const MIN_VELOCITY := -500
 const COYOTE_FRAMES := 4
-const JUMP_BUFFER_FRAMES := 6
+const JUMP_BUFFER_FRAMES := 4
 const CORNER_CORRECTION := Vector2(6, 1)
 
 
@@ -79,6 +79,7 @@ func _physics_process(delta: float) -> void:
 	handle_gravity(delta)
 	
 	# Start coyote time
+	print("on_floor()=%s" % [on_floor()])
 	if !on_floor() and last_floor and !jumping:
 		coyote = true
 	
@@ -135,13 +136,13 @@ func handle_gravity(delta : float) -> void:
 		#animator.play(&"walking")
 		crouching = false
 	else:
-		if on_floor():
-			# Handle animations
-			if sign.y > 0 and !crouching:
-				#animator.play(&"crouch")
-				crouching = true
-			elif sign.y <= 0:
-				crouching = false
+		#if on_floor():
+			## Handle animations
+			#if sign.y > 0 and !crouching:
+				##animator.play(&"crouch")
+				#crouching = true
+			#elif sign.y <= 0:
+				#crouching = false
 				#if animator.current_animation != &"idle":
 					#animator.play(&"idle")
 		velocity.x = move_toward(velocity.x, 0, SPEED)
@@ -163,14 +164,18 @@ func handle_gravity(delta : float) -> void:
 					if abs(tmp_pos.x - position.x) > 8:
 						position = tmp_pos
 						break
-	elif velocity.y > 0: # falling
+	elif falling():
 		#animator.play(&"falling")
 		# Clamp velocity so doesn't infinitely accelerate
-		velocity.y = clamp(velocity.y, MIN_VELOCITY, MAX_VELOCITY) * gravity_modifier()
+		velocity.y = clamp(velocity.y, MIN_VELOCITY, MAX_VELOCITY)
 
 
 func rising() -> bool:
 	return (velocity.y < 0 and gravity_state == Gravity.DOWN) or (velocity.y > 0 and gravity_state == Gravity.UP)
+
+
+func falling() -> bool:
+	return (velocity.y > 0 and gravity_state == Gravity.DOWN) or (velocity.y < 0 and gravity_state == Gravity.UP)
 
 
 ## Handles ticking timers for various physics routines; ex. coyote time and jump buffering
@@ -193,7 +198,7 @@ func jump(consumed : bool) -> bool:
 		#print_debug("is_on_floor() or coyote=%s, %s, %s" % [is_on_floor(), coyote, jumping_down])
 		jumping = true
 		#jump_sfx()
-		velocity.y = (JUMP_VELOCITY- (velocity.y if coyote else 0)) * gravity_modifier()
+		velocity.y = (JUMP_VELOCITY - (velocity.y if coyote else 0)) * gravity_modifier()
 		#animator.play(&"jump_up")
 		return true
 	return false
@@ -208,7 +213,6 @@ func release_jump(consumed : bool) -> bool:
 	return false
 
 
-# FIXME: for some reason can buffer jump while still holding jump button from inital jump
 ## Try to perform buffered jump when holding jump right before landing
 func buffered_jump() -> bool:
 	# Prepare to buffer jump when in air
@@ -229,7 +233,7 @@ func buffered_jump() -> bool:
 
 
 func on_floor() -> bool:
-	return is_on_floor() if gravity_state == Gravity.DOWN else is_on_ceiling()
+	return is_on_floor()
 
 
 ## Return which side of the player is trying to go into the ceiling
@@ -254,7 +258,7 @@ func corner_correction_direciton(delta : float, vel : Vector2) -> int:
 		else: # not blocked at some point along the path, so will not be blocked when corrected; break out of loop
 			dir_flags &= 0b01
 			break
-	print_debug("vel_y=%s, %s, %s" % [vel.y, transform, dir_flags])
+	#print_debug("vel_y=%s, %s, %s" % [vel.y, transform, dir_flags])
 	return dir_flags
 
 
@@ -264,6 +268,8 @@ func set_gravity(state : int) -> void:
 
 func flip_gravity() -> void:
 	gravity_state = Gravity.DOWN if gravity_state == Gravity.UP else Gravity.UP
+	# swap which direction is up so built-in physics methods calculate correctly (like move_and_slide())
+	up_direction = Vector2.UP if gravity_state == Gravity.DOWN else Vector2.DOWN if gravity_state == Gravity.UP else Vector2.UP
 
 
 func _on_area_entered_body(area : Area2D) -> void:
