@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://dmfk0nmkhvrx2"]
+
+[ext_resource type="Script" path="res://scripts/switches/LockSwitch.gd" id="1_q4emp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rehvq"]
+size = Vector2(16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_u2rnv"]
+
+[node name="LockSwitch" type="Area2D"]
+script = ExtResource("1_q4emp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_rehvq")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_u2rnv")

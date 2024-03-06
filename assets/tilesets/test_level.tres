@@ -1,0 +1,39 @@
+[gd_resource type="TileSet" load_steps=12 format=3 uid="uid://r8guxw5xrena"]
+
+[ext_resource type="Texture2D" uid="uid://cy6ppah61n5xj" path="res://assets/16x16.png" id="1_kmig0"]
+[ext_resource type="PackedScene" uid="uid://dc637efx70m38" path="res://assets/switches/blocks/switch_block_1.tscn" id="2_j4ejs"]
+[ext_resource type="PackedScene" uid="uid://be36anha0svm7" path="res://assets/switches/blocks/switch_block_2.tscn" id="3_asrav"]
+[ext_resource type="PackedScene" uid="uid://bdnl3atiddyj1" path="res://assets/switches/blocks/switch_block_3.tscn" id="4_l0r2e"]
+[ext_resource type="PackedScene" uid="uid://bdltm1ofdqyuy" path="res://assets/switches/blocks/switch_block_4.tscn" id="5_tadkv"]
+[ext_resource type="Texture2D" uid="uid://cxru54th0u05k" path="res://assets/16x16_pink.png" id="6_iqbsa"]
+[ext_resource type="PackedScene" uid="uid://rmaw1rfo4v33" path="res://assets/abberant_blocks/reality_anchor.tscn" id="6_np5eg"]
+[ext_resource type="PackedScene" uid="uid://gr6d1l57kra6" path="res://assets/abberant_blocks/dream_anchor.tscn" id="7_qhpmp"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rut0w"]
+texture = ExtResource("1_kmig0")
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_musd6"]
+resource_name = "state_switch_blocks"
+scenes/1/scene = ExtResource("2_j4ejs")
+scenes/2/scene = ExtResource("3_asrav")
+scenes/3/scene = ExtResource("4_l0r2e")
+scenes/4/scene = ExtResource("5_tadkv")
+scenes/5/scene = ExtResource("6_np5eg")
+scenes/6/scene = ExtResource("7_qhpmp")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_jap66"]
+texture = ExtResource("6_iqbsa")
+0:0/0 = 0
+0:0/0/physics_layer_0/linear_velocity = Vector2(0, 0)
+0:0/0/physics_layer_0/angular_velocity = 0.0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[resource]
+physics_layer_0/collision_layer = 4
+sources/0 = SubResource("TileSetAtlasSource_rut0w")
+sources/1 = SubResource("TileSetScenesCollectionSource_musd6")
+sources/2 = SubResource("TileSetAtlasSource_jap66")

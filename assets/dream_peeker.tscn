@@ -1,0 +1,52 @@
+[gd_scene load_steps=2 format=3 uid="uid://br051mslhm75e"]
+
+[ext_resource type="Script" path="res://scripts/dream/DreamPeeker.gd" id="1_q0ghj"]
+
+[node name="SubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("sub_viewport", "bg_viewport", "camera", "area", "sub_area")]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+pivot_offset = Vector2(32, 32)
+script = ExtResource("1_q0ghj")
+sub_viewport = NodePath("SubViewport")
+bg_viewport = NodePath("SubViewportContainer/bg_viewport")
+camera = NodePath("SubViewport/Camera2D")
+area = NodePath("Area2D")
+sub_area = NodePath("SubViewport/Area2D2")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+snap_2d_vertices_to_pixel = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(64, 64)
+render_target_update_mode = 4
+
+[node name="Camera2D" type="Camera2D" parent="SubViewport"]
+z_index = -1
+
+[node name="Area2D2" type="Area2D" parent="SubViewport"]
+collision_layer = 1024
+collision_mask = 256
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="SubViewport/Area2D2"]
+polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+z_index = -1
+layout_mode = 2
+
+[node name="bg_viewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(64, 64)
+render_target_update_mode = 4
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(32, 32)
+collision_layer = 128
+collision_mask = 512
+
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="Area2D"]
+polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)

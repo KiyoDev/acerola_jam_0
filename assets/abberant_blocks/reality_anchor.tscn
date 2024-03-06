@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://rmaw1rfo4v33"]
+
+[ext_resource type="Script" path="res://scripts/dream/RealityAnchor.gd" id="1_p76wr"]
+[ext_resource type="Texture2D" uid="uid://caiwqh7bq615j" path="res://assets/switches/anchors.png" id="2_ywunu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_axu5b"]
+size = Vector2(16, 16)
+
+[node name="StaticBody2D" type="StaticBody2D" node_paths=PackedStringArray("collision", "sprite", "area")]
+collision_layer = 512
+collision_mask = 129
+script = ExtResource("1_p76wr")
+collision = NodePath("CollisionPolygon2D")
+sprite = NodePath("Sprite2D")
+area = NodePath("Area2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = -1
+texture = ExtResource("2_ywunu")
+hframes = 2
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 512
+collision_mask = 128
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_axu5b")

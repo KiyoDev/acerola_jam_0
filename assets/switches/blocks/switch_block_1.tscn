@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://dc637efx70m38"]
+
+[ext_resource type="Script" path="res://scripts/switches/switch_blocks/StateSwitchBlock.gd" id="1_u4nw0"]
+[ext_resource type="Texture2D" uid="uid://b7sv1qenv52gx" path="res://assets/switches/switches.png" id="2_1ic5f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ccfjf"]
+size = Vector2(16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ticds"]
+atlas = ExtResource("2_1ic5f")
+region = Rect2(0, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jv1rn"]
+atlas = ExtResource("2_1ic5f")
+region = Rect2(0, 48, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_avb40"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ticds")
+}],
+"loop": false,
+"name": &"off",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jv1rn")
+}],
+"loop": false,
+"name": &"on",
+"speed": 5.0
+}]
+
+[node name="StateSwitchBlock" type="StaticBody2D"]
+collision_layer = 4
+script = ExtResource("1_u4nw0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_ccfjf")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_avb40")
+animation = &"off"

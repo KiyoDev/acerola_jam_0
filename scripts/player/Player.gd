@@ -75,11 +75,20 @@ func _unhandled_input(event : InputEvent) -> void:
 
 func _physics_process(delta: float) -> void:
 	sprite.flip_v = gravity_state == Gravity.UP
+	if sprite.flip_v:
+		if body_collision.rotation == 0:
+			body_collision.rotate(PI / 2)
+			body_area.rotate(PI / 2)
+	else:
+		if body_collision.rotation > 0:
+			body_collision.rotate(0)
+			body_area.rotate(0)
+		
 	tick_timers()
 	handle_gravity(delta)
 	
 	# Start coyote time
-	print("on_floor()=%s" % [on_floor()])
+	#print("on_floor()=%s" % [on_floor()])
 	if !on_floor() and last_floor and !jumping:
 		coyote = true
 	
@@ -148,7 +157,7 @@ func handle_gravity(delta : float) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
 	if rising(): # rising up
-		animator.play(&"rising")
+		#animator.play(&"rising")
 		var test_vel := Vector2(0, velocity.y * delta)
 		if test_move(transform, test_vel):
 			# Check if head is getting blocked from left or right side when jumping

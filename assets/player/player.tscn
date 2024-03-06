@@ -4,13 +4,13 @@
 [ext_resource type="Texture2D" uid="uid://bqcxxo57c75km" path="res://icon.svg" id="2_k1fj4"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jbea7"]
-size = Vector2(14, 16)
+size = Vector2(14, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8v6vo"]
-size = Vector2(14, 16)
+size = Vector2(14, 14)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("floor_cast", "body_collision", "body_area", "sprite", "animator")]
-collision_mask = 36
+collision_mask = 868
 script = ExtResource("1_5un3a")
 floor_cast = NodePath("floor_cast")
 body_collision = NodePath("CollisionShape2D")
@@ -19,6 +19,7 @@ sprite = NodePath("Sprite2D")
 animator = NodePath("animator")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_jbea7")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -32,6 +33,7 @@ target_position = Vector2(0, 8)
 collision_mask = 24
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="body_area"]
+position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_8v6vo")
 
 [node name="animator" type="AnimationPlayer" parent="."]

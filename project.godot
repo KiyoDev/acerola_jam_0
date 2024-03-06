@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Laberrant"
+config/name="Reverie"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
@@ -53,9 +53,17 @@ jump={
 2d_physics/layer_4="collectible"
 2d_physics/layer_5="enemy"
 2d_physics/layer_6="area_trigger"
+2d_physics/layer_7="switch_block"
+2d_physics/layer_8="dream_peeker"
+2d_physics/layer_9="dream_anchor"
+2d_physics/layer_10="reality_anchor"
+2d_physics/layer_11="sub_peeker"
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/decals/filter=0
+textures/light_projectors/filter=0
 2d/snap/snap_2d_vertices_to_pixel=true
