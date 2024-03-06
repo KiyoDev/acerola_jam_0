@@ -14,11 +14,11 @@ func _ready() -> void:
 	area.area_exited.connect(_on_peeker_exited)
 	original_shape = collision.polygon.duplicate()
 	print("original_shape=", original_shape)
-	#collision.set_deferred("disabled", true)
+	collision.set_deferred("disabled", true)
 
 
 func update_collision_polygon(area : Area2D) -> void:
-	print("area=%s, %s" % [collision.polygon, area.global_position])
+	print("area=%s, %s" % [collision.polygon, self.area.get_parent().get_parent()])
 	# create temporary arrays that take position into account
 	var tmp : PackedVector2Array
 	for v in original_shape:
@@ -59,11 +59,12 @@ func _on_peeker_entered(area : Area2D) -> void:
 	await get_tree().create_timer(0.01).timeout
 	collision.set_deferred("disabled", false)
 	update_collision_polygon(area)
-	area.get_parent().get_parent().moved.connect(_on_peeker_moved)
+	area.get_parent().moved.connect(_on_peeker_moved)
 	
 
 func _on_peeker_exited(area : Area2D) -> void:
 	print("exited")
-	area.get_parent().get_parent().moved.disconnect(_on_peeker_moved)
+	area.get_parent().moved.disconnect(_on_peeker_moved)
+	if !collision: return
 	collision.set_deferred("disabled", true)
 	collision.polygon = []
