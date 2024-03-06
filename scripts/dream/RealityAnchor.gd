@@ -18,16 +18,18 @@ func _ready() -> void:
 
 func update_collision_polygon(area : Area2D) -> void:
 	# create temporary arrays that take position into account
+	# temporary array for self polygon points
 	var tmp : PackedVector2Array
 	for v in original_shape:
 		tmp.append(v + collision.global_position)
-	
+		
+	# temporary array for peeker area points
 	var tmp_a : PackedVector2Array
 	for a : Vector2 in area.get_child(0).polygon:
 		tmp_a.append(a + area.global_position)
 	
+	# clip peeker points from self polygon
 	var clipped := Geometry2D.clip_polygons(tmp, tmp_a)
-	
 	if clipped.size() == 0:
 		collision.set_deferred("disabled", true)
 		return
@@ -39,7 +41,6 @@ func update_collision_polygon(area : Area2D) -> void:
 		tmp.append(c - collision.global_position)
 	
 	collision.polygon = tmp
-	print("final=%s" % [collision.polygon])
 
 
 func _on_peeker_moved(area : Area2D) -> void:

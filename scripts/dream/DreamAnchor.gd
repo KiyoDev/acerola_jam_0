@@ -20,23 +20,22 @@ func _ready() -> void:
 func update_collision_polygon(area : Area2D) -> void:
 	print("area=%s, %s" % [collision.polygon, self.area.get_parent().get_parent()])
 	# create temporary arrays that take position into account
+	# temporary array for self polygon points
 	var tmp : PackedVector2Array
 	for v in original_shape:
 		tmp.append(v + collision.global_position)
-	print("tmp=%s" % [tmp])
-	
+		
+	# temporary array for peeker area points
 	var tmp_a : PackedVector2Array
 	for a : Vector2 in area.get_child(0).polygon:
 		tmp_a.append(a + area.global_position)
-	print("tmp_a=%s" % [tmp_a])
 	
+	# check for intersects between peeker and self
 	var intersect := Geometry2D.intersect_polygons(tmp, tmp_a)
-	print("intersect=%s" % [intersect])
 	if intersect.size() == 0:
 		collision.set_deferred("disabled", true)
 		collision.disabled = true
 		collision.polygon = []
-		print("f%s" % [collision.disabled])
 		return
 	
 	collision.set_deferred("disabled", false)
@@ -47,7 +46,6 @@ func update_collision_polygon(area : Area2D) -> void:
 		tmp.append(c - collision.global_position)
 	
 	collision.polygon = tmp
-	print("final=%s, %s" % [collision.polygon, collision.disabled])
 
 
 func _on_peeker_moved(area : Area2D) -> void:
