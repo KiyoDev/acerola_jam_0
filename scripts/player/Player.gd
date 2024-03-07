@@ -21,6 +21,8 @@ const CORNER_CORRECTION := Vector2(6, 1)
 @export var floor_cast : RayCast2D
 @export var body_collision : CollisionShape2D 
 @export var body_area : Area2D
+@export var hands_area : Area2D
+@export var hands_collision : CollisionShape2D
 
 @export var sprite : Sprite2D
 @export var animator : AnimationPlayer
@@ -48,9 +50,14 @@ var jump_buffer_t := 0
 
 var gravity_state : Gravity = Gravity.DOWN
 
+var target_item : HeldItem
+var held_item : HeldItem
+
 
 func _ready() -> void:
 	body_area.area_entered.connect(_on_area_entered_body)
+	hands_area.body_entered.connect(_on_held_item_entered)
+	hands_area.body_exited.connect(_on_held_item_exited)
 	
 	# physics
 
@@ -65,24 +72,40 @@ func _unhandled_input(event : InputEvent) -> void:
 	# prevent input from doing anything if input was already consumed
 	consumed = jump(consumed)
 	consumed = release_jump(consumed)
+	
+	if Input.is_action_pressed("hold"):
+		if !target_item or held_item: return
+		held_item = target_item
+		held_item.pickup()
+		held_item.reparent(hands_collision)
+		held_item.global_position = hands_collision.global_position
+		target_item = null
+	elif Input.is_action_just_released("hold"):
+		if !held_item: return
+		if velocity == Vector2.ZERO:
+			held_item.drop(facing_direction)
+		else:
+			held_item.throw(facing_direction)
+		held_item = null
 
-	var just_pressed := event.is_pressed() and not event.is_echo()
-	if Input.is_key_pressed(KEY_1) and just_pressed:
-		gravity_state = Gravity.DOWN
-	elif Input.is_key_pressed(KEY_2) and just_pressed:
-		gravity_state = Gravity.UP
+	#var just_pressed := event.is_pressed() and not event.is_echo()
+	#if Input.is_key_pressed(KEY_1) and just_pressed:
+		#gravity_state = Gravity.DOWN
+	#elif Input.is_key_pressed(KEY_2) and just_pressed:
+		#gravity_state = Gravity.UP
 
 
 func _physics_process(delta: float) -> void:
 	sprite.flip_v = gravity_state == Gravity.UP
+	# flip sprite and colliders
 	if sprite.flip_v:
 		if body_collision.rotation == 0:
-			body_collision.rotate(PI / 2)
-			body_area.rotate(PI / 2)
+			body_collision.rotation = PI / 2
+			body_area.rotation = PI / 2
 	else:
 		if body_collision.rotation > 0:
-			body_collision.rotate(0)
-			body_area.rotate(0)
+			body_collision.rotation = 0
+			body_area.rotation = 0
 		
 	tick_timers()
 	handle_gravity(delta)
@@ -140,8 +163,12 @@ func handle_gravity(delta : float) -> void:
 		facing_direction = sign.x
 		if sign.x < 0:
 			sprite.flip_h = true
+			hands_collision.position.x = hands_area.position.x - 5
+			#hands_area.rotation = PI
 		else:
 			sprite.flip_h = false
+			hands_collision.position.x = hands_area.position.x + 5
+			#hands_area.rotation = 0
 		#animator.play(&"walking")
 		crouching = false
 	else:
@@ -288,10 +315,10 @@ func _on_area_entered_body(area : Area2D) -> void:
 		pass
 
 
-func _on_coyote_timer_timeout() -> void:
-	coyote = false
+func _on_held_item_entered(item : Node) -> void:
+	target_item = item
 
 
-func _on_jump_buffer_timer_timeout() -> void:
-	jump_buffered = false
-	can_buffer = false
+func _on_held_item_exited(item : Node) -> void:
+	target_item = null
+

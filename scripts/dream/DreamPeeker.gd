@@ -8,7 +8,6 @@ signal moved(area : Area2D)
 @export var bg_viewport: SubViewport
 @export var camera : Camera2D
 @export var area : Area2D
-@export var sub_area : Area2D
 
 
 var pos : Vector2:
@@ -18,6 +17,7 @@ var pos : Vector2:
 		moved.emit(area)
 
 var original_dream_layer : Node2D
+
 
 func _ready() -> void:
 	#print("%dream_layer=", get_tree().get_first_node_in_group("dream_layer"))

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/dream/DreamPeeker.gd" id="1_q0ghj"]
 
-[node name="SubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("sub_viewport", "bg_viewport", "camera", "area", "sub_area")]
+[node name="SubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("sub_viewport", "bg_viewport", "camera", "area")]
 offset_left = -32.0
 offset_top = -32.0
 offset_right = 32.0
@@ -12,8 +12,7 @@ script = ExtResource("1_q0ghj")
 sub_viewport = NodePath("SubViewport")
 bg_viewport = NodePath("SubViewportContainer/bg_viewport")
 camera = NodePath("SubViewport/Camera2D")
-area = NodePath("reality_hide")
-sub_area = NodePath("dream_show")
+area = NodePath("peek_area")
 
 [node name="SubViewport" type="SubViewport" parent="."]
 transparent_bg = true
@@ -36,18 +35,10 @@ handle_input_locally = false
 size = Vector2i(64, 64)
 render_target_update_mode = 4
 
-[node name="dream_show" type="Area2D" parent="."]
-position = Vector2(32, 32)
-collision_layer = 1024
-collision_mask = 256
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="dream_show"]
-polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)
-
-[node name="reality_hide" type="Area2D" parent="."]
+[node name="peek_area" type="Area2D" parent="."]
 position = Vector2(32, 32)
 collision_layer = 128
-collision_mask = 512
+collision_mask = 768
 
-[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="reality_hide"]
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="peek_area"]
 polygon = PackedVector2Array(-32, -32, 32, -32, 32, 32, -32, 32)

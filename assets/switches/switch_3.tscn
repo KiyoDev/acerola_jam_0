@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://becqjcxqprpq"]
 
-[ext_resource type="Script" path="res://scripts/switches/StateSwitch.gd" id="1_soygc"]
+[ext_resource type="Script" path="res://scripts/objects/switch_blocks/StateSwitch.gd" id="1_soygc"]
 [ext_resource type="Texture2D" uid="uid://b7sv1qenv52gx" path="res://assets/switches/switches.png" id="2_1iajt"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lnv1r"]

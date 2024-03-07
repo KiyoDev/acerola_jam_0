@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://5rxhnyxkr0ol"]
+[gd_scene load_steps=6 format=3 uid="uid://5rxhnyxkr0ol"]
 
 [ext_resource type="Script" path="res://scripts/player/Player.gd" id="1_5un3a"]
 [ext_resource type="Texture2D" uid="uid://bqcxxo57c75km" path="res://icon.svg" id="2_k1fj4"]
@@ -9,12 +9,17 @@ size = Vector2(14, 14)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8v6vo"]
 size = Vector2(14, 14)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("floor_cast", "body_collision", "body_area", "sprite", "animator")]
-collision_mask = 868
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jewrd"]
+size = Vector2(11, 16)
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("floor_cast", "body_collision", "body_area", "hands_area", "hands_collision", "sprite", "animator")]
+collision_mask = 1892
 script = ExtResource("1_5un3a")
 floor_cast = NodePath("floor_cast")
 body_collision = NodePath("CollisionShape2D")
 body_area = NodePath("body_area")
+hands_area = NodePath("hands")
+hands_collision = NodePath("hands/CollisionShape2D")
 sprite = NodePath("Sprite2D")
 animator = NodePath("animator")
 
@@ -37,3 +42,11 @@ position = Vector2(0, 1)
 shape = SubResource("RectangleShape2D_8v6vo")
 
 [node name="animator" type="AnimationPlayer" parent="."]
+
+[node name="hands" type="Area2D" parent="."]
+collision_layer = 2048
+collision_mask = 1024
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hands"]
+position = Vector2(5, 0)
+shape = SubResource("RectangleShape2D_jewrd")

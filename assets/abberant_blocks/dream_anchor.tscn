@@ -8,7 +8,7 @@ size = Vector2(16, 16)
 
 [node name="StaticBody2D" type="StaticBody2D" node_paths=PackedStringArray("collision", "sprite", "area")]
 collision_layer = 256
-collision_mask = 1025
+collision_mask = 129
 script = ExtResource("1_je27o")
 collision = NodePath("CollisionPolygon2D")
 sprite = NodePath("Sprite2D")
@@ -24,7 +24,7 @@ frame = 1
 
 [node name="Area2D" type="Area2D" parent="."]
 collision_layer = 256
-collision_mask = 1024
+collision_mask = 128
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_gg3qa")

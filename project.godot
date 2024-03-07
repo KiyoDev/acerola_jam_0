@@ -16,7 +16,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://scripts/managers/GameManager.gd"
+GameManager="*res://scripts/core/managers/GameManager.gd"
 
 [debug]
 
@@ -42,6 +42,12 @@ folder_colors={
 jump={
 "deadzone": 0.5,
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":32,"key_label":0,"unicode":32,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":90,"key_label":0,"unicode":122,"echo":false,"script":null)
+]
+}
+hold={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194325,"key_label":0,"unicode":0,"echo":false,"script":null)
 ]
 }
 
@@ -57,7 +63,8 @@ jump={
 2d_physics/layer_8="dream_peeker"
 2d_physics/layer_9="dream_anchor"
 2d_physics/layer_10="reality_anchor"
-2d_physics/layer_11="sub_peeker"
+2d_physics/layer_11="held_item"
+2d_physics/layer_12="hand_area"
 
 [rendering]
 
