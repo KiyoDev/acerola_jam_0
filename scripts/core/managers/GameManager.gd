@@ -1,11 +1,14 @@
 extends Node
 
 
+signal restart_level
 signal switch_1_changed(on : bool)
 signal switch_2_changed(on : bool)
 signal switch_3_changed(on : bool)
 signal switch_4_changed(on : bool)
 
+
+var current_level : String
 
 # global switch states
 var switch_1 : bool = false:
@@ -32,11 +35,12 @@ func _ready() -> void:
 	var os : String = OS.get_name()
 	var size : Vector2i = Vector2(2560, 1440) if os == "macOS" else Vector2(1280, 720)
 	window.size = size
-	#window.canvas_cull_mask &= 0b1111_1111_1111_1111_1111
 	
 	# center the window
 	var screen : Vector2i = DisplayServer.screen_get_size()
 	window.position = (screen / 2) - window.size / 2
+	
+	print("current_scene=%s" % get_tree().current_scene)
 
 
 func flip_switch(name : String) -> void:

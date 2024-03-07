@@ -10,7 +10,7 @@ func _ready() -> void:
 	GameManager.get("%s_changed" % switch_state).connect(_on_state_changed)
 	_on_state_changed(GameManager.get(switch_state))
 	collider.disabled = !GameManager.get(switch_state)
-	collision_layer - 0b0000_0100
+	collision_layer = 0b0000_0100
 
 
 func _on_state_changed(on : bool) -> void:

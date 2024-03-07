@@ -4,45 +4,77 @@ class_name HeldItem extends RigidBody2D
 @export var collider : CollisionPolygon2D
 # Used to detect if player is within range to pick up the key
 @export var area : Area2D
+@export var sprite : Sprite2D
 
 
 var held : bool = false
 
 var original_parent : Node
-var thrown : bool = false
+var released : bool = false
+var gravity_down : bool = true
 
 
 func _ready() -> void:
 	original_parent = get_parent()
 	#area.body_entered.connect(_on_player_entered)
 	#area.body_exited.connect(_on_player_exited)
+	print(collision_layer)
+
+
+func _physics_process(delta: float) -> void:
+	if !held and linear_velocity == Vector2.ZERO:
+		if collision_layer != 0b0000_0100_0000_0000:
+			collision_layer = 0b0000_0100_0000_0000
+		released = false
+	#else:
+		#if collision_mask & 1 > 0:
+			#collision_mask &= ~0b1
 
 
 func pickup() -> void:
 	held = true
-	collider.set_deferred("disabled", true)
+	collision_layer = 0b0001_0000_0000_0000
 	freeze = true
 
 
 func drop(direction : int) -> void:
 	held = false
 	reparent(original_parent)
-	global_position.x += direction * 16
-	linear_velocity = Vector2(10 * direction, 0)
-	collider.set_deferred("disabled", false)
+	linear_velocity = Vector2(50 * direction, 0)
+	released = true
 	freeze = false
 
 
 func throw(direction : int) -> void:
 	held = false
 	reparent(original_parent)
-	global_position.x += direction * 16
-	freeze = false
 	linear_velocity = Vector2(300 * direction, 0)
-	thrown = true
-	collider.set_deferred("disabled", false)
-	
+	released = true
+	freeze = false
 
+
+func gravity_modifier() -> int:
+	return 1 if gravity_down else -1
+	
+	
+func flip_gravity() -> void:
+	gravity_down = !gravity_down
+	
+	gravity_scale *= -1
+	print("g=",gravity_down)
+	if gravity_down:
+		set_deferred("rotation", 0)
+		#collider.position.y = -3
+		#area.position.y = -2
+		sprite.flip_h = false
+	else:
+		set_deferred("rotation", PI)
+		#collider.position.y = -11
+		#area.position.y = -3
+		sprite.flip_h = true
+	# swap which direction is up so built-in physics methods calculate correctly (like move_and_slide())
+	#up_direction = Vector2.UP if gravity_state == Gravity.DOWN else Vector2.DOWN if gravity_state == Gravity.UP else Vector2.UP
+	
 #
 #func _on_player_entered(body : Node) -> void:
 	#freeze = true

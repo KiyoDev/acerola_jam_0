@@ -56,8 +56,8 @@ var held_item : HeldItem
 
 func _ready() -> void:
 	body_area.area_entered.connect(_on_area_entered_body)
-	hands_area.body_entered.connect(_on_held_item_entered)
-	hands_area.body_exited.connect(_on_held_item_exited)
+	hands_area.area_entered.connect(_on_held_item_entered)
+	hands_area.area_exited.connect(_on_held_item_exited)
 	
 	# physics
 
@@ -82,7 +82,7 @@ func _unhandled_input(event : InputEvent) -> void:
 		target_item = null
 	elif Input.is_action_just_released("hold"):
 		if !held_item: return
-		if velocity == Vector2.ZERO:
+		if velocity.x == 0:
 			held_item.drop(facing_direction)
 		else:
 			held_item.throw(facing_direction)
@@ -315,10 +315,11 @@ func _on_area_entered_body(area : Area2D) -> void:
 		pass
 
 
-func _on_held_item_entered(item : Node) -> void:
-	target_item = item
+func _on_held_item_entered(item_area : Area2D) -> void:
+	if target_item: return
+	target_item = item_area.get_parent()
 
 
-func _on_held_item_exited(item : Node) -> void:
+func _on_held_item_exited(item_area : Area2D) -> void:
 	target_item = null
 

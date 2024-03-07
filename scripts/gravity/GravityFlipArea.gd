@@ -19,11 +19,11 @@ func _ready() -> void:
 	body_exited.connect(_on_player_exit)
 
 
-func _on_player_enter(player : Node) -> void:
-	if player is Player:
-		player.flip_gravity()
+func _on_player_enter(body : Node) -> void:
+	if body.has_method("flip_gravity"):
+		body.flip_gravity()
 
 
-func _on_player_exit(player : Node) -> void:
-	if player is Player:
-		player.flip_gravity()
+func _on_player_exit(body : Node) -> void:
+	if body.has_method("flip_gravity"):
+		body.flip_gravity()

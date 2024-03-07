@@ -65,6 +65,7 @@ hold={
 2d_physics/layer_10="reality_anchor"
 2d_physics/layer_11="held_item"
 2d_physics/layer_12="hand_area"
+2d_physics/layer_13="thrown_item"
 
 [rendering]
 

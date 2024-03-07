@@ -10,7 +10,7 @@ size = Vector2(14, 14)
 size = Vector2(14, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jewrd"]
-size = Vector2(11, 16)
+size = Vector2(11, 14)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("floor_cast", "body_collision", "body_area", "hands_area", "hands_collision", "sprite", "animator")]
 collision_mask = 1892
