@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dexsno70cid54"]
+
+[ext_resource type="Texture2D" uid="uid://bikay5712qtay" path="res://assets/art/gate_block_aux.png" id="1_ybmpu"]
+
+[node name="StaticBody2D" type="StaticBody2D"]
+collision_layer = 4
+collision_mask = 5149
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ybmpu")

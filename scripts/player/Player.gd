@@ -1,5 +1,6 @@
 class_name Player extends CharacterBody2D
 
+signal death
 
 enum Gravity {
 	DOWN,
@@ -16,6 +17,7 @@ const MIN_VELOCITY := -500
 const COYOTE_FRAMES := 4
 const JUMP_BUFFER_FRAMES := 4
 const CORNER_CORRECTION := Vector2(6, 1)
+const HOLD_DELAY := 20
 
 
 @export var floor_cast : RayCast2D
@@ -43,26 +45,30 @@ var coyote := false
 var jump_buffered := false
 var can_buffer := false
 var last_floor := false
+var released_item := false
 
 var speed_modifier := 1.0
 var coyote_t := 0
 var jump_buffer_t := 0
+var hold_t := 0
 
 var gravity_state : Gravity = Gravity.DOWN
 
 var target_item : HeldItem
 var held_item : HeldItem
+var door : Door
 
 
 func _ready() -> void:
 	body_area.area_entered.connect(_on_area_entered_body)
+	body_area.area_exited.connect(_on_area_exited_body)
 	hands_area.area_entered.connect(_on_held_item_entered)
 	hands_area.area_exited.connect(_on_held_item_exited)
 	
 	# physics
 
 
-func _unhandled_input(event : InputEvent) -> void:
+func _input(event : InputEvent) -> void:
 	if !event.is_action_type() or (!(event is InputEventAction) and !(event is InputEventKey) and !(event is InputEventJoypadButton) and !(event is InputEventJoypadMotion)): return
 	
 	var consumed := false
@@ -73,27 +79,39 @@ func _unhandled_input(event : InputEvent) -> void:
 	consumed = jump(consumed)
 	consumed = release_jump(consumed)
 	
-	if Input.is_action_pressed("hold"):
-		if !target_item or held_item: return
-		held_item = target_item
-		held_item.pickup()
-		held_item.reparent(hands_collision)
-		held_item.global_position = hands_collision.global_position
-		held_item.consumed.connect(func() -> void: held_item = null)
-		target_item = null
-	elif Input.is_action_just_released("hold"):
-		if !held_item: return
-		if velocity.x == 0:
-			held_item.drop(facing_direction)
-		else:
-			held_item.throw(facing_direction)
-		held_item = null
+	if Input.is_action_just_pressed("input_up") and on_floor():
+		if door:
+			# get rect w/ global position to check if position is within the area rect
+			var rect : Rect2 = Rect2(door.global_position - (door.collider.shape.get_rect().size / 2), door.collider.shape.get_rect().size)
+			var inside : bool = rect.has_point(global_position)
+			if inside:
+				door.enter()
 
 	#var just_pressed := event.is_pressed() and not event.is_echo()
 	#if Input.is_key_pressed(KEY_1) and just_pressed:
 		#gravity_state = Gravity.DOWN
 	#elif Input.is_key_pressed(KEY_2) and just_pressed:
 		#gravity_state = Gravity.UP
+
+
+func _process(delta: float) -> void:
+	if Input.is_action_pressed("hold") and !released_item:
+		if target_item and !held_item:
+			released_item = false
+			held_item = target_item
+			held_item.pickup()
+			held_item.reparent(hands_collision)
+			held_item.global_position = hands_collision.global_position
+			held_item.consumed.connect(func() -> void: held_item = null)
+			target_item = null
+	elif Input.is_action_just_released("hold"):
+		if held_item:
+			released_item = true
+			if velocity.x == 0:
+				held_item.drop(facing_direction)
+			else:
+				held_item.throw(facing_direction)
+			held_item = null
 
 
 func _physics_process(delta: float) -> void:
@@ -155,7 +173,7 @@ func handle_gravity(delta : float) -> void:
 		#velocity.y = JUMP_VELOCITY  * gravity_modifier()
 	
 	# Get directional inputs
-	var direction := Input.get_vector(&"ui_left", &"ui_right", &"ui_up", &"ui_down").round()
+	var direction := Input.get_vector("input_left", "input_right", "input_up", "input_down").round()
 	var sign := direction.sign()
 	# use sign instead of direction if theres a joystick with drift messing with axis input
 	# should only flip sprite if getting inputs; means should account for forced movement
@@ -228,10 +246,17 @@ func tick_timers() -> void:
 		if coyote_t == COYOTE_FRAMES:
 			coyote = false
 			coyote_t = 0
+	
+	if released_item:
+		hold_t += 1
+		if hold_t == HOLD_DELAY:
+			released_item = false
+			hold_t = 0
+		
 
 
 func jump(consumed : bool) -> bool:
-	if !consumed and Input.is_action_just_pressed(&"jump") and !jumping_down and (on_floor() or coyote):
+	if !consumed and Input.is_action_just_pressed("jump") and !jumping_down and (on_floor() or coyote):
 		#print_debug("is_on_floor() or coyote=%s, %s, %s" % [is_on_floor(), coyote, jumping_down])
 		jumping = true
 		#jump_sfx()
@@ -243,7 +268,7 @@ func jump(consumed : bool) -> bool:
 
 ## Force player to start falling if they release jump; ties jump height to duration of holding input
 func release_jump(consumed : bool) -> bool:
-	if !consumed and Input.is_action_just_released(&"jump") and !on_floor() and rising():
+	if !consumed and Input.is_action_just_released("jump") and !on_floor() and rising():
 		velocity.y *= 0.5
 		released_jump = true
 		return true
@@ -310,8 +335,21 @@ func flip_gravity() -> void:
 
 
 func _on_area_entered_body(area : Area2D) -> void:
-	# collectible collision layer
-	if(area.collision_layer & 0b0000_0000_0000_1000) > 0:
+	# door layer
+	if (area.collision_layer & 0b0100_0000_0000_0000) > 0:
+		door = area
+	# collectible layer
+	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
+		# TODO: handle collection
+		pass
+
+
+func _on_area_exited_body(area : Area2D) -> void:
+	# door layer
+	if (area.collision_layer & 0b0100_0000_0000_0000) > 0:
+		door = null
+	# collectible layer
+	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
 		# TODO: handle collection
 		pass
 

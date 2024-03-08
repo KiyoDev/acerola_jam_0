@@ -1,24 +1,25 @@
-class_name DreamAnchor extends StaticBody2D
+class_name GateLock extends StaticBody2D
 
 
-@export var collision: CollisionPolygon2D
-@export var sprite : Sprite2D
+signal unlocked
+
+
+@export_enum("1:1", "2:2", "3:3", "4:4", "5:5", "6:6") var channel : int = 1
+@export var collision : CollisionPolygon2D
 @export var area : Area2D
+@export var sprite : Sprite2D
+
 
 var original_shape : PackedVector2Array
 
 
 func _ready() -> void:
-	collision_layer = 0b0001_0000_0000
-	area.area_entered.connect(_on_peeker_entered)
-	area.area_exited.connect(_on_peeker_exited)
+	area.body_entered.connect(_on_key_enter)
 	original_shape = collision.polygon.duplicate()
-	print("original_shape=", original_shape)
-	collision.set_deferred("disabled", true)
 
 
 func update_collision_polygon(area : Area2D) -> void:
-	print("dream acnhor area=%s, %s" % [collision.polygon, self.area.get_parent().get_parent()])
+	print("gate-lock area=%s, %s" % [collision.polygon, self.area.get_parent().get_parent()])
 	# create temporary arrays that take position into account
 	# temporary array for self polygon points
 	var tmp : PackedVector2Array
@@ -46,23 +47,9 @@ func update_collision_polygon(area : Area2D) -> void:
 		tmp.append(c - collision.global_position)
 	
 	collision.polygon = tmp
-
-
-func _on_peeker_moved(area : Area2D) -> void:
-	print("it movedddd")
-	update_collision_polygon(area)
-
-
-func _on_peeker_entered(area : Area2D) -> void:
-	await get_tree().create_timer(0.01).timeout
-	#collision.set_deferred("disabled", false)
-	update_collision_polygon(area)
-	area.get_parent().moved.connect(_on_peeker_moved)
 	
 
-func _on_peeker_exited(area : Area2D) -> void:
-	print("exited")
-	area.get_parent().moved.disconnect(_on_peeker_moved)
-	if !collision: return
-	#collision.set_deferred("disabled", true)
-	collision.polygon = []
+func _on_key_enter(body : Node) -> void:
+	if !body is Key or !body.held or body.channel != channel: return
+	body.consume()
+	unlocked.emit()

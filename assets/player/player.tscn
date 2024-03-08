@@ -10,7 +10,7 @@ size = Vector2(14, 14)
 size = Vector2(14, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jewrd"]
-size = Vector2(11, 12)
+size = Vector2(15.5, 12)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("floor_cast", "body_collision", "body_area", "hands_area", "hands_collision", "sprite", "animator")]
 collision_mask = 9060
@@ -35,7 +35,7 @@ texture = ExtResource("2_k1fj4")
 target_position = Vector2(0, 8)
 
 [node name="body_area" type="Area2D" parent="."]
-collision_mask = 24
+collision_mask = 16408
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="body_area"]
 position = Vector2(0, 1)
@@ -48,5 +48,5 @@ collision_layer = 2048
 collision_mask = 1024
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hands"]
-position = Vector2(5, 0)
+position = Vector2(2.75, 0)
 shape = SubResource("RectangleShape2D_jewrd")
