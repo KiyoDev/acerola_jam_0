@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cklc0ohha61y1"]
+[gd_scene load_steps=16 format=3 uid="uid://cklc0ohha61y1"]
 
 [ext_resource type="Script" path="res://scripts/core/Level.gd" id="1_6wm6a"]
 [ext_resource type="TileSet" uid="uid://r8guxw5xrena" path="res://assets/tilesets/test_level.tres" id="2_wnu7r"]
@@ -13,6 +13,10 @@
 [ext_resource type="PackedScene" uid="uid://dexsno70cid54" path="res://assets/gate_aux.tscn" id="10_p5vlm"]
 [ext_resource type="PackedScene" uid="uid://c1s8pygh85vxm" path="res://assets/gate_lock.tscn" id="11_7uqij"]
 [ext_resource type="PackedScene" uid="uid://c04cna6wi1xeu" path="res://assets/door.tscn" id="11_eajut"]
+[ext_resource type="Texture2D" uid="uid://ckmiodbrbqxsn" path="res://assets/art/death_block.png" id="14_fa1k1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xfj5k"]
+size = Vector2(16, 16)
 
 [node name="test_level" type="Node2D" node_paths=PackedStringArray("spawn_point")]
 script = ExtResource("1_6wm6a")
@@ -86,10 +90,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -8.0
-offset_top = -64.0
-offset_right = 56.0
-offset_bottom = 0.0
+offset_left = -24.0
+offset_top = 3.0
+offset_right = 40.0
+offset_bottom = 67.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -126,3 +130,13 @@ script = ExtResource("10_4og1a")
 [node name="Door" parent="." instance=ExtResource("11_eajut")]
 position = Vector2(-96, 48)
 next_level = "level_1"
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(-200, 104)
+collision_layer = 32768
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_xfj5k")
+
+[node name="Sprite2D" type="Sprite2D" parent="Area2D"]
+texture = ExtResource("14_fa1k1")

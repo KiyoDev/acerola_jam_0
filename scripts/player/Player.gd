@@ -334,10 +334,17 @@ func flip_gravity() -> void:
 	up_direction = Vector2.UP if gravity_state == Gravity.DOWN else Vector2.DOWN if gravity_state == Gravity.UP else Vector2.UP
 
 
+func do_death() -> void:
+	death.emit()
+
+
 func _on_area_entered_body(area : Area2D) -> void:
 	# door layer
 	if (area.collision_layer & 0b0100_0000_0000_0000) > 0:
 		door = area
+	# hazard layer
+	elif (area.collision_layer & 0b1000_0000_0000_0000) > 0:
+		do_death()
 	# collectible layer
 	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
 		# TODO: handle collection

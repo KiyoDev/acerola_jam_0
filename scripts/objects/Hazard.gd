@@ -1,11 +1,11 @@
 class_name Hazard extends PhysicsBody2D
 
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
+@export var area : Area2D
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+#func _ready() -> void:
+	#area.body_entered.connect(_on_player_entered)
+	#
+#
+#func _on_player_entered(body : Node) -> void:
+	#pass
