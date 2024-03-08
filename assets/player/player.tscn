@@ -10,10 +10,10 @@ size = Vector2(14, 14)
 size = Vector2(14, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jewrd"]
-size = Vector2(11, 14)
+size = Vector2(11, 12)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("floor_cast", "body_collision", "body_area", "hands_area", "hands_collision", "sprite", "animator")]
-collision_mask = 1892
+collision_mask = 9060
 script = ExtResource("1_5un3a")
 floor_cast = NodePath("floor_cast")
 body_collision = NodePath("CollisionShape2D")

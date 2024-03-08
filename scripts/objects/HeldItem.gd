@@ -1,5 +1,9 @@
 class_name HeldItem extends RigidBody2D
 
+
+signal consumed
+
+
 # Solid collision
 @export var collider : CollisionPolygon2D
 # Used to detect if player is within range to pick up the key
@@ -23,17 +27,22 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if !held and linear_velocity == Vector2.ZERO:
-		if collision_layer != 0b0000_0100_0000_0000:
-			collision_layer = 0b0000_0100_0000_0000
+		if collision_layer & 0b0100 == 0:
+			collision_layer |= 0b0100
 		released = false
 	#else:
 		#if collision_mask & 1 > 0:
 			#collision_mask &= ~0b1
 
 
+func consume() -> void:
+	consumed.emit()
+	queue_free()
+
+
 func pickup() -> void:
 	held = true
-	collision_layer = 0b0001_0000_0000_0000
+	collision_layer &= ~0b0100
 	freeze = true
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cklc0ohha61y1"]
+[gd_scene load_steps=12 format=3 uid="uid://cklc0ohha61y1"]
 
 [ext_resource type="PackedScene" uid="uid://5rxhnyxkr0ol" path="res://assets/player/player.tscn" id="1_684vv"]
 [ext_resource type="TileSet" uid="uid://r8guxw5xrena" path="res://assets/tilesets/test_level.tres" id="1_dckeg"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://bkx3af8spvht0" path="res://assets/switches/switch_4.tscn" id="7_6r14n"]
 [ext_resource type="PackedScene" uid="uid://b84i2s2t87uum" path="res://assets/key.tscn" id="9_8mbu6"]
 [ext_resource type="PackedScene" uid="uid://br051mslhm75e" path="res://assets/dream_peeker.tscn" id="9_wcd0w"]
+[ext_resource type="PackedScene" uid="uid://dp26jqqk6pqqa" path="res://assets/gate.tscn" id="10_bbmqv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0jswb"]
 size = Vector2(256, 256)
@@ -111,12 +112,17 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_top = 0.0
-offset_bottom = 64.0
+offset_left = -8.0
+offset_top = -64.0
+offset_right = 56.0
+offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="Key" parent="." instance=ExtResource("9_8mbu6")]
-position = Vector2(-24, -32)
+position = Vector2(-24, -25)
+
+[node name="Gate" parent="." instance=ExtResource("10_bbmqv")]
+position = Vector2(-56, 8)

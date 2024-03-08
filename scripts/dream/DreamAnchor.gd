@@ -33,12 +33,12 @@ func update_collision_polygon(area : Area2D) -> void:
 	# check for intersects between peeker and self
 	var intersect := Geometry2D.intersect_polygons(tmp, tmp_a)
 	if intersect.size() == 0:
-		collision.set_deferred("disabled", true)
+		#collision.set_deferred("disabled", true)
 		collision.disabled = true
 		collision.polygon = []
 		return
 	
-	collision.set_deferred("disabled", false)
+	#collision.set_deferred("disabled", false)
 	collision.disabled = false
 	tmp.clear()
 	# return clipped polygon back into relative values
@@ -55,7 +55,7 @@ func _on_peeker_moved(area : Area2D) -> void:
 
 func _on_peeker_entered(area : Area2D) -> void:
 	await get_tree().create_timer(0.01).timeout
-	collision.set_deferred("disabled", false)
+	#collision.set_deferred("disabled", false)
 	update_collision_polygon(area)
 	area.get_parent().moved.connect(_on_peeker_moved)
 	
@@ -64,5 +64,5 @@ func _on_peeker_exited(area : Area2D) -> void:
 	print("exited")
 	area.get_parent().moved.disconnect(_on_peeker_moved)
 	if !collision: return
-	collision.set_deferred("disabled", true)
+	#collision.set_deferred("disabled", true)
 	collision.polygon = []

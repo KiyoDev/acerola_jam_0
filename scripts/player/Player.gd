@@ -79,6 +79,7 @@ func _unhandled_input(event : InputEvent) -> void:
 		held_item.pickup()
 		held_item.reparent(hands_collision)
 		held_item.global_position = hands_collision.global_position
+		held_item.consumed.connect(func() -> void: held_item = null)
 		target_item = null
 	elif Input.is_action_just_released("hold"):
 		if !held_item: return
