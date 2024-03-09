@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://b0hclfbw6cq1"]
+
+[ext_resource type="Shader" path="res://assets/transitions/screen_transition.gdshader" id="1_m0glw"]
+[ext_resource type="Texture2D" uid="uid://bang7efyr7882" path="res://assets/art/circle_white.png" id="2_dmycb"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_42lid"]
+shader = ExtResource("1_m0glw")
+shader_parameter/scale = 0.0
+shader_parameter/mask = ExtResource("2_dmycb")
+
+[node name="screen_transition" type="ColorRect"]
+material = SubResource("ShaderMaterial_42lid")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -240.0
+offset_right = 240.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(240, 240)
+color = Color(0, 0, 0, 1)

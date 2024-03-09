@@ -101,11 +101,11 @@ grow_vertical = 2
 
 [node name="Key" parent="." instance=ExtResource("8_xm8ot")]
 position = Vector2(-72, 8)
-channel = 3
+channel = 7
 
 [node name="Gate" parent="." instance=ExtResource("9_vrfxo")]
 position = Vector2(-120, 56)
-channel = 3
+channel = 7
 
 [node name="StaticBody2D2" parent="Gate" instance=ExtResource("10_p5vlm")]
 position = Vector2(0, -16)

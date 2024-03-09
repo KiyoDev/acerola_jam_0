@@ -38,6 +38,8 @@ var coins := 0
 
 var facing_direction := 1
 var crouching := false
+
+# physics
 var jumping := false
 var jumping_down := false # TODO: used if want to jump down 1-way platforms
 var released_jump := false
@@ -45,15 +47,18 @@ var coyote := false
 var jump_buffered := false
 var can_buffer := false
 var last_floor := false
-var released_item := false
-
+var sliding := false
 var speed_modifier := 1.0
+
+# timers
 var coyote_t := 0
 var jump_buffer_t := 0
 var hold_t := 0
 
 var gravity_state : Gravity = Gravity.DOWN
 
+# item
+var released_item := false
 var target_item : HeldItem
 var held_item : HeldItem
 var door : Door

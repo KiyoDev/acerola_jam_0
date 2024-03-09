@@ -15,9 +15,13 @@ var levels := {
 	# FIXME: change to scan folder for level scenes
 }
 
+@export var screen_transition : ColorRect
+@export var transition_animator : AnimationPlayer
 
+var player : Player
 var current_level : String
 
+var transitioning := false
 
 # global switch states
 var switch_1 : bool = false:
@@ -40,6 +44,7 @@ var switch_4 : bool = false:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	set_physics_process(false)
 	var window : Window = get_tree().root
 	var os : String = OS.get_name()
 	var size : Vector2i = Vector2(2560, 1440) if os == "macOS" else Vector2(1280, 720)
@@ -49,13 +54,12 @@ func _ready() -> void:
 	var screen : Vector2i = DisplayServer.screen_get_size()
 	window.position = (screen / 2) - window.size / 2
 	
+	add_child(screen_transition)
+	
 	print("current_scene=%s" % get_tree().current_scene)
 	get_levels()
 	print("levels=%s" % [levels])
 
-
-func flip_switch(name : String) -> void:
-	set(name, !get(name))
 
 
 func get_next_level(name : String) -> void:
@@ -63,10 +67,30 @@ func get_next_level(name : String) -> void:
 	if !levels.has(name):
 		push_error("Path['%s'] to level '%s' doesn't exist" % [path, name])
 		return
-	get_tree().change_scene_to_file("res://levels/%s.tscn" % [name])
-	current_level = name
-	await get_tree().create_timer(0.5).timeout
 	
+	# set transition to be centered around player
+	screen_transition.global_position = player.global_position - (screen_transition.get_rect().size / 2)
+	transitioning = true
+	transition_animator.play("fade_in")
+	get_tree().paused = true
+	await transition_animator.animation_finished
+	
+	# change scene while screen is faded
+	get_tree().change_scene_to_file("res://levels/%s.tscn" % [name])
+	await get_tree().create_timer(0.1).timeout
+	current_level = name
+	
+	# set transition to be centered around player
+	screen_transition.global_position = player.global_position - (screen_transition.get_rect().size / 2)
+	transitioning = true
+	transition_animator.play("fade_out")
+	await transition_animator.animation_finished
+	get_tree().paused = false
+
+
+func flip_switch(name : String) -> void:
+	set(name, !get(name))
+
 
 func _on_player_death() -> void:
 	get_tree().reload_current_scene()

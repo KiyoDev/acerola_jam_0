@@ -10,3 +10,4 @@ func _ready() -> void:
 	add_child(player)
 	player.global_position = spawn_point.global_position
 	player.death.connect(GameManager._on_player_death)
+	GameManager.player = player
