@@ -12,6 +12,7 @@ shader_parameter/mask = ExtResource("4_poew8")
 
 [sub_resource type="Animation" id="Animation_uoam5"]
 resource_name = "fade_in"
+length = 1.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -42,6 +43,7 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_v83ib"]
 resource_name = "fade_out"
+length = 1.1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true

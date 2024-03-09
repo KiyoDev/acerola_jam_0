@@ -15,7 +15,7 @@ const JUMP_VELOCITY := -340
 const MAX_VELOCITY := 400
 const MIN_VELOCITY := -500
 const COYOTE_FRAMES := 4
-const JUMP_BUFFER_FRAMES := 4
+const JUMP_BUFFER_FRAMES := 5
 const CORNER_CORRECTION := Vector2(6, 1)
 const HOLD_DELAY := 20
 
@@ -73,7 +73,7 @@ func _ready() -> void:
 	# physics
 
 
-func _input(event : InputEvent) -> void:
+func _unhandled_input(event : InputEvent) -> void:
 	if !event.is_action_type() or (!(event is InputEventAction) and !(event is InputEventKey) and !(event is InputEventJoypadButton) and !(event is InputEventJoypadMotion)): return
 	
 	var consumed := false
@@ -193,22 +193,22 @@ func handle_gravity(delta : float) -> void:
 			sprite.flip_h = false
 			hands_collision.position.x = hands_area.position.x + 5
 			#hands_area.rotation = 0
-		#animator.play(&"walking")
+		animator.play(&"walking")
 		crouching = false
 	else:
-		#if on_floor():
-			## Handle animations
-			#if sign.y > 0 and !crouching:
-				##animator.play(&"crouch")
-				#crouching = true
-			#elif sign.y <= 0:
-				#crouching = false
-				#if animator.current_animation != &"idle":
-					#animator.play(&"idle")
+		if on_floor():
+			# Handle animations
+			if sign.y > 0 and !crouching:
+				animator.play(&"crouching")
+				crouching = true
+			elif sign.y <= 0:
+				crouching = false
+				if animator.current_animation != &"idle":
+					animator.play(&"idle")
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 	
 	if rising(): # rising up
-		#animator.play(&"rising")
+		animator.play(&"rising")
 		var test_vel := Vector2(0, velocity.y * delta)
 		if test_move(transform, test_vel):
 			# Check if head is getting blocked from left or right side when jumping
@@ -225,7 +225,7 @@ func handle_gravity(delta : float) -> void:
 						position = tmp_pos
 						break
 	elif falling():
-		#animator.play(&"falling")
+		animator.play(&"falling")
 		# Clamp velocity so doesn't infinitely accelerate
 		velocity.y = clamp(velocity.y, MIN_VELOCITY, MAX_VELOCITY)
 
@@ -244,6 +244,7 @@ func tick_timers() -> void:
 		jump_buffer_t += 1
 		if jump_buffer_t == JUMP_BUFFER_FRAMES:
 			jump_buffered = false
+			can_buffer = false
 			jump_buffer_t = 0
 	
 	if coyote:
@@ -266,7 +267,7 @@ func jump(consumed : bool) -> bool:
 		jumping = true
 		#jump_sfx()
 		velocity.y = (JUMP_VELOCITY - (velocity.y if coyote else 0)) * gravity_modifier()
-		#animator.play(&"jump_up")
+		animator.play(&"jump_up")
 		return true
 	return false
 
@@ -295,7 +296,7 @@ func buffered_jump() -> bool:
 			jumping = true
 			can_buffer = false # finished buffer
 			velocity.y = JUMP_VELOCITY * gravity_modifier()
-			#animator.play(&"jump_up")
+			animator.play(&"jump_up")
 	return false
 
 
@@ -340,6 +341,11 @@ func flip_gravity() -> void:
 
 
 func do_death() -> void:
+	#  TODO: animation before dying
+	set_physics_process(false)
+	set_process_unhandled_input(false)
+	animator.play("death")
+	await animator.animation_finished
 	death.emit()
 
 
