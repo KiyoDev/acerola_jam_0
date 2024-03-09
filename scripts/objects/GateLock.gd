@@ -4,18 +4,24 @@ class_name GateLock extends StaticBody2D
 signal unlocked
 
 
-@export_enum("1:1", "2:2", "3:3", "4:4", "5:5", "6:6") var channel : int = 1
 @export var collision : CollisionPolygon2D
 @export var area : Area2D
 @export var sprite : Sprite2D
+@export var frame : Sprite2D
 
 
 var original_shape : PackedVector2Array
+var channel : int = 1
 
 
 func _ready() -> void:
 	area.body_entered.connect(_on_key_enter)
 	original_shape = collision.polygon.duplicate()
+
+
+func init_color(channel : int) -> void:
+	self.channel = channel
+	sprite.modulate = Key.COLORS[channel]
 
 
 func update_collision_polygon(area : Area2D) -> void:

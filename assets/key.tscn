@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://b84i2s2t87uum"]
 
 [ext_resource type="Script" path="res://scripts/objects/Key.gd" id="1_4e0f1"]
-[ext_resource type="Texture2D" uid="uid://cutoeadnjoc58" path="res://assets/art/key.png" id="2_uggsb"]
+[ext_resource type="Texture2D" uid="uid://dx6iju41e5l1f" path="res://assets/art/key_blank.png" id="2_veovd"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_2hvc3"]
 bounce = 0.1
@@ -26,7 +26,7 @@ polygon = PackedVector2Array(-8, 0, -8, 8, 8, 8, 8, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -3)
-texture = ExtResource("2_uggsb")
+texture = ExtResource("2_veovd")
 
 [node name="Area2D" type="Area2D" parent="."]
 position = Vector2(0, -2)
@@ -34,5 +34,7 @@ collision_layer = 1024
 collision_mask = 2048
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+visible = false
+z_index = -1
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_hlqbp")

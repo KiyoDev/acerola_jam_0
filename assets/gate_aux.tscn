@@ -1,13 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://dexsno70cid54"]
+[gd_scene load_steps=4 format=3 uid="uid://dexsno70cid54"]
 
+[ext_resource type="Script" path="res://scripts/objects/GateAuxiliaryBlock.gd" id="1_ecx51"]
 [ext_resource type="Texture2D" uid="uid://bikay5712qtay" path="res://assets/art/gate_block_aux.png" id="1_ybmpu"]
+[ext_resource type="Texture2D" uid="uid://dmtvgna60tqx3" path="res://assets/art/gate_frame.png" id="3_oel7x"]
 
-[node name="StaticBody2D" type="StaticBody2D"]
+[node name="StaticBody2D" type="StaticBody2D" node_paths=PackedStringArray("sprite", "frame")]
 collision_layer = 4
 collision_mask = 5149
+script = ExtResource("1_ecx51")
+sprite = NodePath("Sprite2D")
+frame = NodePath("Frame")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_ybmpu")
+
+[node name="Frame" type="Sprite2D" parent="."]
+texture = ExtResource("3_oel7x")

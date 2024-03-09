@@ -1,12 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://c1s8pygh85vxm"]
+[gd_scene load_steps=5 format=3 uid="uid://c1s8pygh85vxm"]
 
 [ext_resource type="Script" path="res://scripts/objects/GateLock.gd" id="1_3om4f"]
 [ext_resource type="Texture2D" uid="uid://dsktecf6tlted" path="res://assets/art/gate_block.png" id="2_pkatw"]
+[ext_resource type="Texture2D" uid="uid://dmtvgna60tqx3" path="res://assets/art/gate_frame.png" id="3_66vya"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_amjl8"]
 size = Vector2(16, 16)
 
-[node name="Gate" type="StaticBody2D" node_paths=PackedStringArray("collision", "area", "sprite")]
+[node name="GateLock" type="StaticBody2D" node_paths=PackedStringArray("collision", "area", "sprite")]
 collision_layer = 8196
 collision_mask = 5149
 script = ExtResource("1_3om4f")
@@ -26,3 +27,6 @@ collision_mask = 1024
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 shape = SubResource("RectangleShape2D_amjl8")
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+texture = ExtResource("3_66vya")
