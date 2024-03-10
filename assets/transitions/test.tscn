@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b0hclfbw6cq1"]
 
 [ext_resource type="Shader" path="res://assets/transitions/screen_transition.gdshader" id="1_m0glw"]
-[ext_resource type="Texture2D" uid="uid://bang7efyr7882" path="res://assets/art/circle_white.png" id="2_dmycb"]
+[ext_resource type="Texture2D" uid="uid://bang7efyr7882" path="res://assets/art/door_white.png" id="2_dmycb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_42lid"]
 shader = ExtResource("1_m0glw")

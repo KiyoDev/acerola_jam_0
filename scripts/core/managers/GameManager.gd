@@ -1,7 +1,12 @@
 extends Node
 
+signal transitioned_in
+signal transitioned_out
+signal finished_transition
 
-signal restart_level
+signal level_loaded
+signal restart_level(player : Player)
+
 signal switch_1_changed(on : bool)
 signal switch_2_changed(on : bool)
 signal switch_3_changed(on : bool)
@@ -9,6 +14,8 @@ signal switch_4_changed(on : bool)
 
 
 const PLAYER_SCN : PackedScene = preload("res://assets/player/player.tscn")
+const DOOR_CUTOUT : Texture2D = preload("res://assets/art/door_white.png")
+const SLIME_CUTOUT : Texture2D = preload("res://assets/art/slime_cutout.png")
 
 # "name": <path>
 var levels := {
@@ -18,10 +25,16 @@ var levels := {
 @export var screen_transition : ColorRect
 @export var transition_animator : AnimationPlayer
 
-var player : Player
-var current_level : String
+var gems := 0
+var player : Player:
+	set(value):
+		player = value
+		print("p=", value)
+var current_level : Level
+var current_level_name : String
 
 var transitioning := false
+var reloading_level := false
 
 # global switch states
 var switch_1 : bool = false:
@@ -59,7 +72,28 @@ func _ready() -> void:
 	print("current_scene=%s" % get_tree().current_scene)
 	get_levels()
 	print("levels=%s" % [levels])
+	reloading_level = false
 
+
+func load_player() -> void:
+	if player != null:
+		player.queue_free()
+		player = null
+	player = PLAYER_SCN.instantiate()
+	player.death.connect(_on_player_death)
+	add_child(player)
+
+
+func register_level(level : Level) -> void:
+	if current_level != level:
+		current_level = level
+		#restart_level.connect(level._on_level_reloaded)
+		current_level.loaded.connect(_on_level_loaded)
+		load_player()
+		player.reparent(level)
+		player.global_position = level.spawn_point.global_position
+		transition_in(SLIME_CUTOUT if reloading_level else DOOR_CUTOUT)
+		reloading_level = false
 
 
 func get_next_level(name : String) -> void:
@@ -68,33 +102,57 @@ func get_next_level(name : String) -> void:
 		push_error("Path['%s'] to level '%s' doesn't exist" % [path, name])
 		return
 	
-	# set transition to be centered around player
-	screen_transition.global_position = player.global_position - (screen_transition.get_rect().size / 2)
-	transitioning = true
-	transition_animator.play("fade_in")
-	get_tree().paused = true
-	await transition_animator.animation_finished
+	await transition_out(DOOR_CUTOUT)
 	
 	# change scene while screen is faded
 	get_tree().change_scene_to_file("res://levels/%s.tscn" % [name])
 	await get_tree().create_timer(0.1).timeout
-	current_level = name
+	current_level_name = name
 	
+
+
+func transition_in(texture : Texture2D = null) -> void:
+	if texture:
+		screen_transition.material.set_shader_parameter("mask", texture)
 	# set transition to be centered around player
 	screen_transition.global_position = player.global_position - (screen_transition.get_rect().size / 2)
 	transitioning = true
 	transition_animator.play("fade_out")
 	await transition_animator.animation_finished
-	get_tree().paused = false
+	transitioned_in.emit()
+
+
+func transition_out(texture : Texture2D = null) -> void:
+	if texture:
+		screen_transition.material.set_shader_parameter("mask", texture)
+	# set transition to be centered around player
+	screen_transition.global_position = player.global_position - (screen_transition.get_rect().size / 2)
+	transitioning = true
+	transition_animator.play("fade_in")
+	await transition_animator.animation_finished
+	transitioned_out.emit()
 
 
 func flip_switch(name : String) -> void:
 	set(name, !get(name))
 
 
-func _on_player_death() -> void:
-	get_tree().reload_current_scene()
+func _on_player_death(player : Player) -> void:
+	await transition_out(SLIME_CUTOUT)
 	
+	get_tree().reload_current_scene()
+	print_debug(get_tree().current_scene)
+	reloading_level = true
+	await get_tree().create_timer(0.1).timeout
+	#print_debug(get_tree().current_scene)
+	#current_level = get_tree().current_scene
+	restart_level.emit(player)
+
+
+func _on_level_loaded() -> void:
+	level_loaded.emit()
+
+
 #--------------------------------------
 # Search directory for all levels
 #--------------------------------------

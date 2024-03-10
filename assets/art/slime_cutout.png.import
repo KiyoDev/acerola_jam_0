@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bang7efyr7882"
-path="res://.godot/imported/circle_white.png-b81bfba123db4419affe8c6899101ae2.ctex"
+uid="uid://c62ckr5ae33di"
+path="res://.godot/imported/slime_cutout.png-57ab7b2bb32306382a13603af6665b8c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/art/circle_white.png"
-dest_files=["res://.godot/imported/circle_white.png-b81bfba123db4419affe8c6899101ae2.ctex"]
+source_file="res://assets/art/slime_cutout.png"
+dest_files=["res://.godot/imported/slime_cutout.png-57ab7b2bb32306382a13603af6665b8c.ctex"]
 
 [params]
 

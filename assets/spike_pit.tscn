@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://pfi3ny1o8yb0"]
+
+[ext_resource type="Texture2D" uid="uid://cdbqb7l6bfe0a" path="res://assets/art/tileset_2.png" id="1_23f7t"]
+
+[node name="Area2D" type="Area2D"]
+collision_layer = 32768
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-8, 2, 8, 2, 8, 8, -8, 8)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_23f7t")
+hframes = 32
+vframes = 32
+frame = 39
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+z_index = -1
+collision_layer = 4
+collision_mask = 5145
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(-8, 3, 8, 3, 8, 8, -8, 8)

@@ -10,8 +10,8 @@ enum Gravity {
 }
 
 
-const SPEED := 120
-const JUMP_VELOCITY := -340
+const SPEED := 90
+const JUMP_VELOCITY := -280
 const MAX_VELOCITY := 400
 const MIN_VELOCITY := -500
 const COYOTE_FRAMES := 4
@@ -34,7 +34,8 @@ const HOLD_DELAY := 20
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity : int = ProjectSettings.get_setting("physics/2d/default_gravity")
 
-var coins := 0
+# states
+var dead := false
 
 var facing_direction := 1
 var crouching := false
@@ -49,6 +50,7 @@ var can_buffer := false
 var last_floor := false
 var sliding := false
 var speed_modifier := 1.0
+var gravity_multiplier := 0.8
 
 # timers
 var coyote_t := 0
@@ -70,6 +72,14 @@ func _ready() -> void:
 	hands_area.area_entered.connect(_on_held_item_entered)
 	hands_area.area_exited.connect(_on_held_item_exited)
 	
+	set_physics_process(false)
+	set_process_unhandled_input(false)
+	body_collision.set_deferred("disabled", true)
+	
+	GameManager.transitioned_in.connect(func() -> void: 
+		set_physics_process(true)
+		set_process_unhandled_input(true)
+		body_collision.set_deferred("disabled", false))
 	# physics
 
 
@@ -90,7 +100,13 @@ func _unhandled_input(event : InputEvent) -> void:
 			var rect : Rect2 = Rect2(door.global_position - (door.collider.shape.get_rect().size / 2), door.collider.shape.get_rect().size)
 			var inside : bool = rect.has_point(global_position)
 			if inside:
+				set_physics_process(false)
+				set_process_unhandled_input(false)
+				body_collision.set_deferred("disabled", true)
+				velocity = Vector2.ZERO
+				
 				door.enter()
+				
 
 	#var just_pressed := event.is_pressed() and not event.is_echo()
 	#if Input.is_key_pressed(KEY_1) and just_pressed:
@@ -99,27 +115,10 @@ func _unhandled_input(event : InputEvent) -> void:
 		#gravity_state = Gravity.UP
 
 
-func _process(delta: float) -> void:
-	if Input.is_action_pressed("hold") and !released_item:
-		if target_item and !held_item:
-			released_item = false
-			held_item = target_item
-			held_item.pickup()
-			held_item.reparent(hands_collision)
-			held_item.global_position = hands_collision.global_position
-			held_item.consumed.connect(func() -> void: held_item = null)
-			target_item = null
-	elif Input.is_action_just_released("hold"):
-		if held_item:
-			released_item = true
-			if velocity.x == 0:
-				held_item.drop(facing_direction)
-			else:
-				held_item.throw(facing_direction)
-			held_item = null
-
-
 func _physics_process(delta: float) -> void:
+	tick_timers()
+	handle_item_hold() 
+	
 	sprite.flip_v = gravity_state == Gravity.UP
 	# flip sprite and colliders
 	if sprite.flip_v:
@@ -130,8 +129,7 @@ func _physics_process(delta: float) -> void:
 		if body_collision.rotation > 0:
 			body_collision.rotation = 0
 			body_area.rotation = 0
-		
-	tick_timers()
+	
 	handle_gravity(delta)
 	
 	# Start coyote time
@@ -151,23 +149,49 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 
+func face_direction(face_right : bool) -> void:
+	facing_direction = face_right
+	sprite.flip_h = !facing_direction
+	hands_collision.position.x = hands_area.position.x + (-5 if facing_direction else 5)
+
+
 func gravity_modifier() -> int:
 	return 1 if gravity_state == Gravity.DOWN else -1
+
+
+func handle_item_hold() -> void:
+	if Input.is_action_pressed("hold") and !released_item:
+		if target_item and !held_item:
+			released_item = false
+			held_item = target_item
+			held_item.pickup()
+			held_item.reparent(hands_collision)
+			held_item.global_position = hands_collision.global_position
+			held_item.consumed.connect(func() -> void: held_item = null)
+			target_item = null
+	elif Input.is_action_just_released("hold"):
+		if held_item:
+			released_item = true
+			if velocity.x == 0:
+				held_item.drop(facing_direction)
+			else:
+				held_item.throw(facing_direction)
+			held_item = null
 
 
 func handle_gravity(delta : float) -> void:
 	# Add the gravity.
 	if not on_floor():
-		velocity.y += gravity * gravity_modifier() * delta / 2
+		velocity.y += gravity * gravity_multiplier * gravity_modifier() * delta / 2
 	
 	if not on_floor():
 		crouching = false
-		var grav := gravity * gravity_modifier()
+		var grav := gravity * gravity_multiplier * gravity_modifier()
 		if coyote:
 			grav = 0
 		# let player hang a little more towards the peak of jump by reducing grav near peak
 		elif !jumping and -100 < velocity.y and velocity.y < 100:
-			grav = gravity * gravity_modifier() / 2
+			grav = gravity * gravity_multiplier * gravity_modifier() / 2
 		
 		velocity.y += grav * delta
 	
@@ -184,15 +208,14 @@ func handle_gravity(delta : float) -> void:
 	# should only flip sprite if getting inputs; means should account for forced movement
 	if sign.x != 0:
 		velocity.x = sign.x * roundi(SPEED * speed_modifier)
-		facing_direction = sign.x
-		if sign.x < 0:
-			sprite.flip_h = true
-			hands_collision.position.x = hands_area.position.x - 5
-			#hands_area.rotation = PI
-		else:
-			sprite.flip_h = false
-			hands_collision.position.x = hands_area.position.x + 5
-			#hands_area.rotation = 0
+		face_direction(sign.x > 0)
+		#facing_direction = sign.x
+		#if sign.x < 0:
+			#sprite.flip_h = true
+			#hands_collision.position.x = hands_area.position.x - 5
+		#else:
+			#sprite.flip_h = false
+			#hands_collision.position.x = hands_area.position.x + 5
 		animator.play(&"walking")
 		crouching = false
 	else:
@@ -341,12 +364,13 @@ func flip_gravity() -> void:
 
 
 func do_death() -> void:
-	#  TODO: animation before dying
+	dead = true
 	set_physics_process(false)
 	set_process_unhandled_input(false)
+	body_collision.set_deferred("disabled", true)
 	animator.play("death")
 	await animator.animation_finished
-	death.emit()
+	death.emit(self)
 
 
 func _on_area_entered_body(area : Area2D) -> void:
@@ -354,7 +378,7 @@ func _on_area_entered_body(area : Area2D) -> void:
 	if (area.collision_layer & 0b0100_0000_0000_0000) > 0:
 		door = area
 	# hazard layer
-	elif (area.collision_layer & 0b1000_0000_0000_0000) > 0:
+	elif (area.collision_layer & 0b1000_0000_0000_0000) > 0 and !dead:
 		do_death()
 	# collectible layer
 	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
