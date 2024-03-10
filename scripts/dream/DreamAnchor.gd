@@ -18,7 +18,7 @@ func _ready() -> void:
 
 
 func update_collision_polygon(area : Area2D) -> void:
-	print("dream acnhor area=%s, %s" % [collision.polygon, self.area.get_parent().get_parent()])
+	#print("dream acnhor area=%s, %s" % [collision.polygon, self.area.get_parent().get_parent()])
 	# create temporary arrays that take position into account
 	# temporary array for self polygon points
 	var tmp : PackedVector2Array

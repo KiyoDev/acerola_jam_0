@@ -76,11 +76,19 @@ func _ready() -> void:
 	set_process_unhandled_input(false)
 	body_collision.set_deferred("disabled", true)
 	
+	animator.play("spawning")
+	animator.animation_finished.connect(_ready_idle)
+	
 	GameManager.transitioned_in.connect(func() -> void: 
 		set_physics_process(true)
 		set_process_unhandled_input(true)
 		body_collision.set_deferred("disabled", false))
 	# physics
+
+
+func _ready_idle(name : String) -> void:
+	animator.play("idle")
+	animator.animation_finished.disconnect(_ready_idle)
 
 
 func _unhandled_input(event : InputEvent) -> void:
@@ -150,9 +158,9 @@ func _physics_process(delta: float) -> void:
 
 
 func face_direction(face_right : bool) -> void:
-	facing_direction = face_right
-	sprite.flip_h = !facing_direction
-	hands_collision.position.x = hands_area.position.x + (-5 if facing_direction else 5)
+	facing_direction = 1 if face_right else -1
+	sprite.flip_h = !face_right
+	hands_collision.position.x = hands_area.position.x + (5 if face_right else -5)
 
 
 func gravity_modifier() -> int:
@@ -172,10 +180,10 @@ func handle_item_hold() -> void:
 	elif Input.is_action_just_released("hold"):
 		if held_item:
 			released_item = true
-			if velocity.x == 0:
-				held_item.drop(facing_direction)
-			else:
-				held_item.throw(facing_direction)
+			#if velocity.x == 0:
+			held_item.drop(velocity, facing_direction)
+			#else:
+				#held_item.throw(facing_direction)
 			held_item = null
 
 

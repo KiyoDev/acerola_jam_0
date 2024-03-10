@@ -1,0 +1,108 @@
+[gd_scene load_steps=8 format=3 uid="uid://dralcop6cogv3"]
+
+[ext_resource type="Script" path="res://scripts/objects/HeldItem.gd" id="1_dgncn"]
+[ext_resource type="PackedScene" uid="uid://br051mslhm75e" path="res://assets/dream_peeker_area.tscn" id="2_64rvt"]
+[ext_resource type="Texture2D" uid="uid://w7knm7cpl6ut" path="res://assets/art/dream_peeker.png" id="3_f1uq8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_p1d18"]
+size = Vector2(16, 16)
+
+[sub_resource type="Animation" id="Animation_ut35s"]
+resource_name = "held"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"enable"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_8mfgy"]
+resource_name = "loose"
+length = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("SubViewportContainer")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"disable"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_s8o43"]
+_data = {
+"held": SubResource("Animation_ut35s"),
+"loose": SubResource("Animation_8mfgy")
+}
+
+[node name="HeldItem" type="RigidBody2D" node_paths=PackedStringArray("collider", "area", "animator", "sprite")]
+collision_layer = 1028
+collision_mask = 11076
+lock_rotation = true
+freeze_mode = 1
+script = ExtResource("1_dgncn")
+collider = NodePath("CollisionPolygon2D")
+area = NodePath("Area2D")
+animator = NodePath("AnimationPlayer")
+sprite = NodePath("Sprite2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+
+[node name="SubViewportContainer" parent="." instance=ExtResource("2_64rvt")]
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 1024
+collision_mask = 2048
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_p1d18")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("3_f1uq8")
+hframes = 2
+frame = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_s8o43")
+}
+autoplay = "loose"

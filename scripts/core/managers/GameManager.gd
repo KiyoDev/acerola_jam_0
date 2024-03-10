@@ -5,7 +5,7 @@ signal transitioned_out
 signal finished_transition
 
 signal level_loaded
-signal restart_level(player : Player)
+signal level_reloaded
 
 signal switch_1_changed(on : bool)
 signal switch_2_changed(on : bool)
@@ -87,7 +87,6 @@ func load_player() -> void:
 func register_level(level : Level) -> void:
 	if current_level != level:
 		current_level = level
-		#restart_level.connect(level._on_level_reloaded)
 		current_level.loaded.connect(_on_level_loaded)
 		load_player()
 		player.reparent(level)
@@ -106,9 +105,7 @@ func get_next_level(name : String) -> void:
 	
 	# change scene while screen is faded
 	get_tree().change_scene_to_file("res://levels/%s.tscn" % [name])
-	await get_tree().create_timer(0.1).timeout
 	current_level_name = name
-	
 
 
 func transition_in(texture : Texture2D = null) -> void:
@@ -141,12 +138,10 @@ func _on_player_death(player : Player) -> void:
 	await transition_out(SLIME_CUTOUT)
 	
 	get_tree().reload_current_scene()
-	print_debug(get_tree().current_scene)
 	reloading_level = true
 	await get_tree().create_timer(0.1).timeout
 	#print_debug(get_tree().current_scene)
 	#current_level = get_tree().current_scene
-	restart_level.emit(player)
 
 
 func _on_level_loaded() -> void:

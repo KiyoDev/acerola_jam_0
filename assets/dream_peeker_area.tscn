@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/dream/DreamPeeker.gd" id="1_q0ghj"]
 
-[node name="SubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("sub_viewport", "bg_viewport", "camera", "area")]
+[node name="SubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("sub_viewport", "bg_viewport", "camera", "area", "collider")]
 offset_left = -32.0
 offset_top = -32.0
 offset_right = 32.0
@@ -13,6 +13,7 @@ sub_viewport = NodePath("SubViewport")
 bg_viewport = NodePath("SubViewportContainer/bg_viewport")
 camera = NodePath("SubViewport/Camera2D")
 area = NodePath("peek_area")
+collider = NodePath("peek_area/CollisionPolygon2D2")
 
 [node name="SubViewport" type="SubViewport" parent="."]
 transparent_bg = true

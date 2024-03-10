@@ -16,8 +16,3 @@ func load_level() -> void:
 	GameManager.register_level(self)
 	
 	loaded.emit()
-
-
-#func _on_level_reloaded(player : Player) -> void:
-	#player.reparent(self)
-	#player.global_position = spawn_point.global_position

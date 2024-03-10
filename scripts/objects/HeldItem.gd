@@ -8,6 +8,7 @@ signal consumed
 @export var collider : CollisionPolygon2D
 # Used to detect if player is within range to pick up the key
 @export var area : Area2D
+@export var animator : AnimationPlayer
 @export var sprite : Sprite2D
 
 
@@ -44,22 +45,18 @@ func pickup() -> void:
 	held = true
 	collision_layer &= ~0b0100
 	freeze = true
+	if animator:
+		animator.play("held")
 
 
-func drop(direction : int) -> void:
+func drop(velocity : Vector2, direction : int) -> void:
 	held = false
 	reparent(original_parent)
-	linear_velocity = Vector2(50 * direction, 0)
+	linear_velocity = Vector2(80 * direction + velocity.x, -10)
 	released = true
 	freeze = false
-
-
-func throw(direction : int) -> void:
-	held = false
-	reparent(original_parent)
-	linear_velocity = Vector2(300 * direction, 0)
-	released = true
-	freeze = false
+	if animator:
+		animator.play("loose")
 
 
 func gravity_modifier() -> int:

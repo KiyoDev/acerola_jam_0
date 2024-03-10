@@ -8,6 +8,7 @@ signal moved(area : Area2D)
 @export var bg_viewport: SubViewport
 @export var camera : Camera2D
 @export var area : Area2D
+@export var collider : CollisionPolygon2D
 
 
 var pos : Vector2:
@@ -32,6 +33,22 @@ func _ready() -> void:
 	bg_viewport.add_child(dream_bg.duplicate(0b0111))
 	dream_bg.queue_free()
 	pivot_offset = size / 2
+	pos = global_position
+	set_process(false)
+
+
+func enable() -> void:
+	pos = global_position
+	_on_position_updated()
+	set_process(true)
+	show()
+	collider.set_deferred("disabled", false)
+
+
+func disable() -> void:
+	set_process(false)
+	hide()
+	collider.set_deferred("disabled", true)
 
 
 func _process(delta: float) -> void:
