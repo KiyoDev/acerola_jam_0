@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3 uid="uid://cxgg3cuusjcsc"]
+
+[ext_resource type="Script" path="res://scripts/objects/DreamPeekerHolder.gd" id="1_aus17"]
+[ext_resource type="Texture2D" uid="uid://dej7uluc3gups" path="res://assets/art/dream_peeker_holder.png" id="2_ffgiw"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qun7v"]
+size = Vector2(16, 16)
+
+[node name="DreamPeekerHolder" type="Area2D" node_paths=PackedStringArray("collider", "point")]
+collision_layer = 8192
+collision_mask = 5120
+script = ExtResource("1_aus17")
+collider = NodePath("CollisionShape2D")
+point = NodePath("Marker2D")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_qun7v")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_ffgiw")
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(0, -4)

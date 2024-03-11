@@ -73,16 +73,18 @@ _data = {
 "loose": SubResource("Animation_8mfgy")
 }
 
-[node name="HeldItem" type="RigidBody2D" node_paths=PackedStringArray("collider", "area", "animator", "sprite")]
-collision_layer = 1028
+[node name="HeldItem" type="RigidBody2D" node_paths=PackedStringArray("collider", "area", "area_collider", "animator", "sprite")]
+collision_layer = 66560
 collision_mask = 11076
 lock_rotation = true
 freeze_mode = 1
 script = ExtResource("1_dgncn")
 collider = NodePath("CollisionPolygon2D")
 area = NodePath("Area2D")
+area_collider = NodePath("Area2D/CollisionShape2D")
 animator = NodePath("AnimationPlayer")
 sprite = NodePath("Sprite2D")
+metadata/dream_peeker = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)

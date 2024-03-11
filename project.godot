@@ -90,6 +90,7 @@ input_right={
 2d_physics/layer_14="interactable"
 2d_physics/layer_15="door"
 2d_physics/layer_16="hazard"
+2d_physics/layer_17="solid"
 
 [rendering]
 

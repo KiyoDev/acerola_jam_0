@@ -323,7 +323,7 @@ frame = 2
 target_position = Vector2(0, 8)
 
 [node name="body_area" type="Area2D" parent="."]
-collision_mask = 49176
+collision_mask = 57368
 collision_priority = 2.0
 input_pickable = false
 

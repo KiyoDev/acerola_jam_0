@@ -2,18 +2,22 @@ class_name HeldItem extends RigidBody2D
 
 
 signal consumed
+signal grabbed
 
+const CURSOR_SCN : PackedScene = preload("res://assets/items/item_cursor.tscn")
 
 # Solid collision
 @export var collider : CollisionPolygon2D
 # Used to detect if player is within range to pick up the key
 @export var area : Area2D
+@export var area_collider : CollisionShape2D
 @export var animator : AnimationPlayer
 @export var sprite : Sprite2D
 
 
 var held : bool = false
 
+var original_collision_layer : int
 var original_parent : Node
 var released : bool = false
 var gravity_down : bool = true
@@ -23,17 +27,18 @@ func _ready() -> void:
 	original_parent = get_parent()
 	#area.body_entered.connect(_on_player_entered)
 	#area.body_exited.connect(_on_player_exited)
+	original_collision_layer = collision_layer
 	print(collision_layer)
+	var cursor : AnimatedSprite2D = CURSOR_SCN.instantiate()
+	add_child(cursor)
+	cursor.position.y -= 12
 
 
 func _physics_process(delta: float) -> void:
 	if !held and linear_velocity == Vector2.ZERO:
-		if collision_layer & 0b0100 == 0:
-			collision_layer |= 0b0100
+		if collision_layer & original_collision_layer == 0:
+			collision_layer = original_collision_layer
 		released = false
-	#else:
-		#if collision_mask & 1 > 0:
-			#collision_mask &= ~0b1
 
 
 func consume() -> void:
@@ -41,12 +46,15 @@ func consume() -> void:
 	queue_free()
 
 
-func pickup() -> void:
+func pickup(node : Node) -> void:
 	held = true
-	collision_layer &= ~0b0100
+	collision_layer &= ~0b0001_0000_0000_0000_0000
 	freeze = true
+	reparent(node)
+	global_position = node.global_position
 	if animator:
 		animator.play("held")
+	grabbed.emit()
 
 
 func drop(velocity : Vector2, direction : int) -> void:
@@ -57,6 +65,16 @@ func drop(velocity : Vector2, direction : int) -> void:
 	freeze = false
 	if animator:
 		animator.play("loose")
+
+
+func enable_area() -> void:
+	area_collider.set_deferred("disabled", false)
+	area_collider.disabled = false
+
+
+func disable_area() -> void:
+	area_collider.set_deferred("disabled", true)
+	area_collider.disabled = true
 
 
 func gravity_modifier() -> int:

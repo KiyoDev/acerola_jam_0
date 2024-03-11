@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://dcnnx4bsn2gqw"]
+
+[ext_resource type="Texture2D" uid="uid://brdlx6wnjfxv6" path="res://assets/art/cursor.png" id="1_l5mxv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_88f5p"]
+atlas = ExtResource("1_l5mxv")
+region = Rect2(0, 0, 8, 8)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ux40u"]
+atlas = ExtResource("1_l5mxv")
+region = Rect2(8, 0, 8, 8)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_miqax"]
+animations = [{
+"frames": [{
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_88f5p")
+}, {
+"duration": 2.0,
+"texture": SubResource("AtlasTexture_ux40u")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Sprite2D" type="AnimatedSprite2D"]
+sprite_frames = SubResource("SpriteFrames_miqax")
+autoplay = "default"
+frame_progress = 0.844482

@@ -61,9 +61,13 @@ var gravity_state : Gravity = Gravity.DOWN
 
 # item
 var released_item := false
-var target_item : HeldItem
+var target_item : HeldItem:
+	set(value):
+		print("TARGET_)CHJANGE=%s" % [value])
+		target_item = value
 var held_item : HeldItem
 var door : Door
+var interactable : Node
 
 
 func _ready() -> void:
@@ -114,7 +118,17 @@ func _unhandled_input(event : InputEvent) -> void:
 				velocity = Vector2.ZERO
 				
 				door.enter()
-				
+	elif Input.is_action_just_pressed("hold") and interactable:
+		interactable._interact(self)
+		#if !held_item:
+			#released_item = false
+			#held_item = interactable
+			#held_item.pickup(hands_collision)
+			##held_item.reparent(hands_collision)
+			##held_item.global_position = hands_collision.global_position
+			#held_item.consumed.connect(func() -> void: held_item = null)
+			#held_item.grabbed.connect(func() -> void: held_item = null)
+			#target_item = null
 
 	#var just_pressed := event.is_pressed() and not event.is_echo()
 	#if Input.is_key_pressed(KEY_1) and just_pressed:
@@ -169,22 +183,50 @@ func gravity_modifier() -> int:
 
 func handle_item_hold() -> void:
 	if Input.is_action_pressed("hold") and !released_item:
-		if target_item and !held_item:
-			released_item = false
-			held_item = target_item
-			held_item.pickup()
-			held_item.reparent(hands_collision)
-			held_item.global_position = hands_collision.global_position
-			held_item.consumed.connect(func() -> void: held_item = null)
-			target_item = null
+		print_debug("target_item=%s, %s" % [target_item, held_item])
+		grab_item(target_item)
+		#if target_item and !held_item:
+			#released_item = false
+			#held_item = target_item
+			#held_item.pickup(hands_collision)
+			##held_item.reparent(hands_collision)
+			##held_item.global_position = hands_collision.global_position
+			#held_item.consumed.connect(func() -> void: held_item = null)
+			#held_item.grabbed.connect(func() -> void: held_item = null)
+		target_item = null
 	elif Input.is_action_just_released("hold"):
 		if held_item:
 			released_item = true
 			#if velocity.x == 0:
+			held_item.consumed.disconnect(remove_held_item)
+			held_item.grabbed.disconnect(remove_held_item)
 			held_item.drop(velocity, facing_direction)
 			#else:
 				#held_item.throw(facing_direction)
 			held_item = null
+
+
+func grab_item(item : HeldItem) -> void:
+	print_debug("item=%s" % [item])
+	if item and !held_item:
+		held_item = item
+		held_item.pickup(hands_collision)
+		print_debug("grab held_item=%s" % [held_item])
+		#held_item.reparent(hands_collision)
+		#held_item.global_position = hands_collision.global_position
+		held_item.consumed.connect(remove_held_item)
+		held_item.grabbed.connect(remove_held_item)
+		released_item = false
+		#target_item = null
+
+
+func remove_held_item() -> void: 
+	released_item = true
+	if held_item:
+		held_item.consumed.disconnect(remove_held_item)
+		held_item.grabbed.disconnect(remove_held_item)
+	held_item = null
+	target_item = null
 
 
 func handle_gravity(delta : float) -> void:
@@ -392,6 +434,9 @@ func _on_area_entered_body(area : Area2D) -> void:
 	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
 		# TODO: handle collection
 		pass
+	# interactible layer
+	elif (area.collision_layer & 0b0010_0000_0000_0000) > 0:
+		interactable = area
 
 
 func _on_area_exited_body(area : Area2D) -> void:
@@ -402,11 +447,15 @@ func _on_area_exited_body(area : Area2D) -> void:
 	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
 		# TODO: handle collection
 		pass
+	# interactible layer
+	elif (area.collision_layer & 0b0010_0000_0000_0000) > 0:
+		interactable = null
 
 
 func _on_held_item_entered(item_area : Area2D) -> void:
 	if target_item: return
 	target_item = item_area.get_parent()
+	print_debug("t entered=%s, %s, %s" % [target_item, target_item.collider.disabled, item_area.collision_layer])
 
 
 func _on_held_item_exited(item_area : Area2D) -> void:
