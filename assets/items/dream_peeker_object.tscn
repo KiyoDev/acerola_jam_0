@@ -54,7 +54,7 @@ tracks/0/keys = {
 }
 tracks/1/type = "method"
 tracks/1/imported = false
-tracks/1/enabled = true
+tracks/1/enabled = false
 tracks/1/path = NodePath("SubViewportContainer")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
@@ -76,6 +76,7 @@ _data = {
 [node name="HeldItem" type="RigidBody2D" node_paths=PackedStringArray("collider", "area", "area_collider", "animator", "sprite")]
 collision_layer = 66560
 collision_mask = 11076
+collision_priority = 0.0
 lock_rotation = true
 freeze_mode = 1
 script = ExtResource("1_dgncn")
@@ -87,7 +88,7 @@ sprite = NodePath("Sprite2D")
 metadata/dream_peeker = true
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
+polygon = PackedVector2Array(-5, -5, 5, -5, 5, 5, -5, 5)
 
 [node name="SubViewportContainer" parent="." instance=ExtResource("2_64rvt")]
 

@@ -7,5 +7,4 @@ class_name Door extends Area2D
 
 
 func enter() -> void:
-	print("entered door")
-	GameManager.get_next_level(next_level)
+	GameManager.get_next_level(next_level.to_lower())

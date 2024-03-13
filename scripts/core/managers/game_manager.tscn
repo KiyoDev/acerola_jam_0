@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://ghcndvp81aj5"]
+[gd_scene load_steps=12 format=3 uid="uid://ghcndvp81aj5"]
 
 [ext_resource type="Script" path="res://scripts/core/managers/GameManager.gd" id="1_vx3ts"]
 [ext_resource type="PackedScene" uid="uid://etae41uab7id" path="res://assets/transitions/circle_transition.tscn" id="2_7b1p4"]
 [ext_resource type="Shader" path="res://assets/transitions/screen_transition.gdshader" id="3_ansx1"]
+[ext_resource type="Theme" uid="uid://bvheengvsjenp" path="res://assets/ui/custom_font.tres" id="3_sankh"]
 [ext_resource type="Texture2D" uid="uid://bang7efyr7882" path="res://assets/art/door_white.png" id="4_poew8"]
+[ext_resource type="Texture2D" uid="uid://dhyo1iaoonm11" path="res://assets/art/gem.png" id="5_26wrp"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_h2faj"]
 shader = ExtResource("3_ansx1")
@@ -64,10 +66,52 @@ _data = {
 "fade_out": SubResource("Animation_v83ib")
 }
 
-[node name="Node" type="Node" node_paths=PackedStringArray("screen_transition", "transition_animator")]
+[node name="Node" type="Node" node_paths=PackedStringArray("screen_transition", "transition_animator", "floor_label", "gem_label")]
 script = ExtResource("1_vx3ts")
 screen_transition = NodePath("screen_transition")
 transition_animator = NodePath("AnimationPlayer")
+floor_label = NodePath("Control/VBoxContainer/floor_value")
+gem_label = NodePath("Control/gems")
+
+[node name="Control" type="Control" parent="."]
+z_index = 3
+layout_mode = 3
+anchors_preset = 0
+offset_left = -240.0
+offset_top = -136.0
+offset_right = -200.0
+offset_bottom = -96.0
+theme = ExtResource("3_sankh")
+
+[node name="TextureRect" type="TextureRect" parent="Control"]
+offset_left = 7.0
+offset_top = 23.0
+offset_right = 23.0
+offset_bottom = 39.0
+texture = ExtResource("5_26wrp")
+stretch_mode = 2
+
+[node name="gems" type="Label" parent="Control"]
+offset_left = 23.0
+offset_top = 27.0
+offset_right = 47.0
+offset_bottom = 38.0
+text = "x0"
+vertical_alignment = 2
+
+[node name="VBoxContainer" type="HBoxContainer" parent="Control"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 53.0
+offset_bottom = 19.0
+
+[node name="Floor" type="Label" parent="Control/VBoxContainer"]
+layout_mode = 2
+text = "Floor"
+
+[node name="floor_value" type="Label" parent="Control/VBoxContainer"]
+layout_mode = 2
 
 [node name="screen_transition" parent="." instance=ExtResource("2_7b1p4")]
 process_mode = 3
@@ -82,3 +126,5 @@ process_mode = 3
 libraries = {
 "": SubResource("AnimationLibrary_bvibs")
 }
+
+[node name="Camera2D" type="Camera2D" parent="."]

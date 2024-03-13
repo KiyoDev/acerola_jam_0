@@ -1,0 +1,22 @@
+[remap]
+
+importer="font_data_image"
+type="FontFile"
+uid="uid://drchjq27c55ht"
+path="res://.godot/imported/custom_font.png-dba239b38be586e6e5aaf976539d8fa6.fontdata"
+
+[deps]
+
+source_file="res://assets/art/custom_font.png"
+dest_files=["res://.godot/imported/custom_font.png-dba239b38be586e6e5aaf976539d8fa6.fontdata"]
+
+[params]
+
+character_ranges=PackedStringArray("32-126")
+columns=95
+rows=1
+image_margin=Rect2i(0, 0, 0, 0)
+character_margin=Rect2i(0, 0, 0, 0)
+fallbacks=[]
+compress=false
+scaling_mode=1

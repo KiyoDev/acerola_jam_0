@@ -4,6 +4,7 @@ class_name StateSwitch extends Area2D
 @export var sprite : AnimatedSprite2D
 @export var collider : CollisionShape2D
 @export var animator : AnimationPlayer
+@export var on := false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -18,9 +19,8 @@ func _ready() -> void:
 
 func _on_body_entered(body : Node) -> void:
 	print("%s entered" % body.name)
-	GameManager.flip_switch(switch_state)
-	_on_state_changed(GameManager.get(switch_state))
-
-
-func _on_state_changed(on : bool) -> void:
+	#GameManager.flip_switch(switch_state)
+	GameManager.get(switch_state).emit()
+	on = !on
 	animator.play("bump_on" if on else "bump_off")
+

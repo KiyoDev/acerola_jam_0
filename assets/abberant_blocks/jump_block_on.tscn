@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://dxphewpwjtyqc"]
+
+[ext_resource type="Script" path="res://scripts/objects/JumpBlock.gd" id="1_ytctl"]
+[ext_resource type="Texture2D" uid="uid://fs3mp2f06ih6" path="res://assets/art/jump_blocks.png" id="2_msm8u"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ow33"]
+atlas = ExtResource("2_msm8u")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xqulm"]
+atlas = ExtResource("2_msm8u")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_f6k1e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ow33")
+}],
+"loop": false,
+"name": &"off",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xqulm")
+}],
+"loop": false,
+"name": &"on",
+"speed": 5.0
+}]
+
+[node name="JumpBlock" type="StaticBody2D" node_paths=PackedStringArray("sprite", "collider")]
+collision_layer = 4
+collision_mask = 5145
+script = ExtResource("1_ytctl")
+sprite = NodePath("AnimatedSprite2D")
+collider = NodePath("CollisionPolygon2D")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+disabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_f6k1e")
+animation = &"on"

@@ -1,6 +1,7 @@
 class_name Player extends CharacterBody2D
 
 signal death
+signal collected_gem
 
 enum Gravity {
 	DOWN,
@@ -120,21 +121,9 @@ func _unhandled_input(event : InputEvent) -> void:
 				door.enter()
 	elif Input.is_action_just_pressed("hold") and interactable:
 		interactable._interact(self)
-		#if !held_item:
-			#released_item = false
-			#held_item = interactable
-			#held_item.pickup(hands_collision)
-			##held_item.reparent(hands_collision)
-			##held_item.global_position = hands_collision.global_position
-			#held_item.consumed.connect(func() -> void: held_item = null)
-			#held_item.grabbed.connect(func() -> void: held_item = null)
-			#target_item = null
-
-	#var just_pressed := event.is_pressed() and not event.is_echo()
-	#if Input.is_key_pressed(KEY_1) and just_pressed:
-		#gravity_state = Gravity.DOWN
-	#elif Input.is_key_pressed(KEY_2) and just_pressed:
-		#gravity_state = Gravity.UP
+	elif Input.is_action_just_pressed("reset"):
+		GameManager.reload_level()
+		freeze()
 
 
 func _physics_process(delta: float) -> void:
@@ -341,6 +330,7 @@ func jump(consumed : bool) -> bool:
 		#jump_sfx()
 		velocity.y = (JUMP_VELOCITY - (velocity.y if coyote else 0)) * gravity_modifier()
 		animator.play(&"jump_up")
+		GameManager.player_jumped.emit()
 		return true
 	return false
 
@@ -370,6 +360,7 @@ func buffered_jump() -> bool:
 			can_buffer = false # finished buffer
 			velocity.y = JUMP_VELOCITY * gravity_modifier()
 			animator.play(&"jump_up")
+			GameManager.player_jumped.emit()
 	return false
 
 
@@ -413,11 +404,15 @@ func flip_gravity() -> void:
 	up_direction = Vector2.UP if gravity_state == Gravity.DOWN else Vector2.DOWN if gravity_state == Gravity.UP else Vector2.UP
 
 
-func do_death() -> void:
-	dead = true
+func freeze() -> void:
 	set_physics_process(false)
 	set_process_unhandled_input(false)
 	body_collision.set_deferred("disabled", true)
+
+
+func do_death() -> void:
+	freeze()
+	dead = true
 	animator.play("death")
 	await animator.animation_finished
 	death.emit(self)
@@ -431,9 +426,9 @@ func _on_area_entered_body(area : Area2D) -> void:
 	elif (area.collision_layer & 0b1000_0000_0000_0000) > 0 and !dead:
 		do_death()
 	# collectible layer
-	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
-		# TODO: handle collection
-		pass
+	elif area is Gem:
+		area.collect()
+		collected_gem.emit()
 	# interactible layer
 	elif (area.collision_layer & 0b0010_0000_0000_0000) > 0:
 		interactable = area
@@ -443,10 +438,6 @@ func _on_area_exited_body(area : Area2D) -> void:
 	# door layer
 	if (area.collision_layer & 0b0100_0000_0000_0000) > 0:
 		door = null
-	# collectible layer
-	elif (area.collision_layer & 0b0000_0000_0000_1000) > 0:
-		# TODO: handle collection
-		pass
 	# interactible layer
 	elif (area.collision_layer & 0b0010_0000_0000_0000) > 0:
 		interactable = null

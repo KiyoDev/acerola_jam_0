@@ -1,0 +1,6 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bvheengvsjenp"]
+
+[ext_resource type="FontFile" uid="uid://drchjq27c55ht" path="res://assets/art/custom_font.png" id="1_3r13a"]
+
+[resource]
+default_font = ExtResource("1_3r13a")

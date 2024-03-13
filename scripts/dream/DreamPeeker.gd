@@ -34,7 +34,7 @@ func _ready() -> void:
 	dream_bg.queue_free()
 	pivot_offset = size / 2
 	pos = global_position
-	set_process(false)
+	disable()
 
 
 func enable() -> void:

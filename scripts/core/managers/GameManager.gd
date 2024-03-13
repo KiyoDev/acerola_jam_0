@@ -7,11 +7,12 @@ signal finished_transition
 signal level_loaded
 signal level_reloaded
 
-signal switch_1_changed(on : bool)
-signal switch_2_changed(on : bool)
-signal switch_3_changed(on : bool)
-signal switch_4_changed(on : bool)
+signal switch_1
+signal switch_2
+signal switch_3
+signal switch_4
 
+signal player_jumped
 
 const PLAYER_SCN : PackedScene = preload("res://assets/player/player.tscn")
 const DOOR_CUTOUT : Texture2D = preload("res://assets/art/door_white.png")
@@ -24,35 +25,40 @@ var levels := {
 
 @export var screen_transition : ColorRect
 @export var transition_animator : AnimationPlayer
+@export var floor_label : Label
+@export var gem_label : Label
 
-var gems := 0
+var gems := 0:
+	set(value):
+		gems = value
+		gem_label.text = "x%d" % gems
 var player : Player:
 	set(value):
 		player = value
-		print("p=", value)
 var current_level : Level
 var current_level_name : String
 
 var transitioning := false
 var reloading_level := false
+var gem_collected := false
 
 # global switch states
-var switch_1 : bool = false:
-	set(value):
-		switch_1 = value
-		switch_1_changed.emit(value)
-var switch_2 : bool = false:
-	set(value):
-		switch_2 = value
-		switch_2_changed.emit(value)
-var switch_3 : bool = false:
-	set(value):
-		switch_3 = value
-		switch_3_changed.emit(value)
-var switch_4 : bool = false:
-	set(value):
-		switch_4 = value
-		switch_4_changed.emit(value)
+#var switch_1 : bool = false:
+	#set(value):
+		#switch_1 = value
+		#switch_1_changed.emit(value)
+#var switch_2 : bool = false:
+	#set(value):
+		#switch_2 = value
+		#switch_2_changed.emit(value)
+#var switch_3 : bool = false:
+	#set(value):
+		#switch_3 = value
+		#switch_3_changed.emit(value)
+#var switch_4 : bool = false:
+	#set(value):
+		#switch_4 = value
+		#switch_4_changed.emit(value)
 
 
 # Called when the node enters the scene tree for the first time.
@@ -73,7 +79,8 @@ func _ready() -> void:
 	get_levels()
 	print("levels=%s" % [levels])
 	reloading_level = false
-
+	gem_label.text = "x%d" % gems
+	
 
 func load_player() -> void:
 	if player != null:
@@ -81,6 +88,7 @@ func load_player() -> void:
 		player = null
 	player = PLAYER_SCN.instantiate()
 	player.death.connect(_on_player_death)
+	player.collected_gem.connect(_on_gem_collected)
 	add_child(player)
 
 
@@ -93,6 +101,7 @@ func register_level(level : Level) -> void:
 		player.global_position = level.spawn_point.global_position
 		transition_in(SLIME_CUTOUT if reloading_level else DOOR_CUTOUT)
 		reloading_level = false
+		floor_label.text = "%d" % current_level.floor
 
 
 func get_next_level(name : String) -> void:
@@ -106,6 +115,7 @@ func get_next_level(name : String) -> void:
 	# change scene while screen is faded
 	get_tree().change_scene_to_file("res://levels/%s.tscn" % [name])
 	current_level_name = name
+	gem_collected = false
 
 
 func transition_in(texture : Texture2D = null) -> void:
@@ -130,23 +140,29 @@ func transition_out(texture : Texture2D = null) -> void:
 	transitioned_out.emit()
 
 
-func flip_switch(name : String) -> void:
-	set(name, !get(name))
-
-
-func _on_player_death(player : Player) -> void:
+func reload_level() -> void:
 	await transition_out(SLIME_CUTOUT)
+	if gem_collected:
+		gems -= 1
+	gem_collected = false
 	
 	get_tree().reload_current_scene()
 	reloading_level = true
 	await get_tree().create_timer(0.1).timeout
-	#print_debug(get_tree().current_scene)
-	#current_level = get_tree().current_scene
+	
+
+
+func _on_player_death(player : Player) -> void:
+	reload_level()
 
 
 func _on_level_loaded() -> void:
 	level_loaded.emit()
 
+
+func _on_gem_collected() -> void:
+	gems += 1
+	gem_collected = true
 
 #--------------------------------------
 # Search directory for all levels

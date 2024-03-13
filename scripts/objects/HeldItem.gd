@@ -60,11 +60,11 @@ func pickup(node : Node) -> void:
 func drop(velocity : Vector2, direction : int) -> void:
 	held = false
 	reparent(original_parent)
-	linear_velocity = Vector2(80 * direction + velocity.x, -10)
+	linear_velocity = Vector2(0, -10)
 	released = true
 	freeze = false
-	if animator:
-		animator.play("loose")
+	#if animator:
+		#animator.play("loose")
 
 
 func enable_area() -> void:
