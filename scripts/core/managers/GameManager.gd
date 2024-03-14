@@ -18,6 +18,14 @@ const PLAYER_SCN : PackedScene = preload("res://assets/player/player.tscn")
 const DOOR_CUTOUT : Texture2D = preload("res://assets/art/door_white.png")
 const SLIME_CUTOUT : Texture2D = preload("res://assets/art/slime_cutout.png")
 
+const SFX := {
+	"jump": preload("res://assets/audio/jump.wav"),
+	"death": preload("res://assets/audio/death.wav"),
+	"gem": preload("res://assets/audio/gem.wav"),
+	"next": preload("res://assets/audio/next.wav"),
+	"hit_block": preload("res://assets/audio/hit_block.wav")
+}
+
 # "name": <path>
 var levels := {
 	# FIXME: change to scan folder for level scenes
@@ -25,8 +33,12 @@ var levels := {
 
 @export var screen_transition : ColorRect
 @export var transition_animator : AnimationPlayer
+@export var ui : Control
 @export var floor_label : Label
 @export var gem_label : Label
+@export var audio : AudioStreamPlayer
+@export var player_audio : AudioStreamPlayer
+@export var music_player : AudioStreamPlayer
 
 var gems := 0:
 	set(value):
@@ -42,31 +54,16 @@ var transitioning := false
 var reloading_level := false
 var gem_collected := false
 
-# global switch states
-#var switch_1 : bool = false:
-	#set(value):
-		#switch_1 = value
-		#switch_1_changed.emit(value)
-#var switch_2 : bool = false:
-	#set(value):
-		#switch_2 = value
-		#switch_2_changed.emit(value)
-#var switch_3 : bool = false:
-	#set(value):
-		#switch_3 = value
-		#switch_3_changed.emit(value)
-#var switch_4 : bool = false:
-	#set(value):
-		#switch_4 = value
-		#switch_4_changed.emit(value)
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	set_physics_process(false)
 	var window : Window = get_tree().root
 	var os : String = OS.get_name()
-	var size : Vector2i = Vector2(2560, 1440) if os == "macOS" else Vector2(1280, 720)
+	var size : Vector2i = Vector2(2560, 1440) if os == "macOS" else Vector2(1440, 810)
+	#var size : Vector2i = Vector2(2560, 1440) if os == "macOS" else Vector2(1920, 1080)
+	#var size : Vector2i = Vector2(2560, 1440) if os == "macOS" else Vector2(1280, 720)
+	# 640, 360; 320, 180; 160, 90
 	window.size = size
 	
 	# center the window
@@ -75,11 +72,13 @@ func _ready() -> void:
 	
 	add_child(screen_transition)
 	
-	print("current_scene=%s" % get_tree().current_scene)
 	get_levels()
-	print("levels=%s" % [levels])
 	reloading_level = false
 	gem_label.text = "x%d" % gems
+	ui.hide()
+	music_player.volume_db = 3
+	music_player.set_stream(preload("res://assets/audio/incomplete.wav"))
+	music_player.play()
 	
 
 func load_player() -> void:
@@ -114,6 +113,7 @@ func get_next_level(name : String) -> void:
 	
 	# change scene while screen is faded
 	get_tree().change_scene_to_file("res://levels/%s.tscn" % [name])
+	ui.show()
 	current_level_name = name
 	gem_collected = false
 
@@ -133,7 +133,7 @@ func transition_out(texture : Texture2D = null) -> void:
 	if texture:
 		screen_transition.material.set_shader_parameter("mask", texture)
 	# set transition to be centered around player
-	screen_transition.global_position = player.global_position - (screen_transition.get_rect().size / 2)
+	screen_transition.global_position = (player.global_position if player else Vector2.ZERO) - (screen_transition.get_rect().size / 2)
 	transitioning = true
 	transition_animator.play("fade_in")
 	await transition_animator.animation_finished
@@ -163,6 +163,19 @@ func _on_level_loaded() -> void:
 func _on_gem_collected() -> void:
 	gems += 1
 	gem_collected = true
+
+# SFX
+
+func player_sfx(name : String) -> void:
+	player_audio.volume_db = -12
+	player_audio.set_stream(SFX[name])
+	player_audio.play()
+
+
+func play_sfx(name : String) -> void:
+	audio.volume_db = -12
+	audio.set_stream(SFX[name])
+	audio.play()
 
 #--------------------------------------
 # Search directory for all levels

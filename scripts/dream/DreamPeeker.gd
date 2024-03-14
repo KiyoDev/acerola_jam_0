@@ -23,15 +23,17 @@ var original_dream_layer : Node2D
 func _ready() -> void:
 	#print("%dream_layer=", get_tree().get_first_node_in_group("dream_layer"))
 	var dream_layer : Node2D = get_tree().get_first_node_in_group("dream_layer")
+	if dream_layer:
+		# duplicate dream layer
+		var dup : Node2D = dream_layer.duplicate()
+		dream_layer.z_index = -1
+		dup.z_index = 0
+		# add dream duplicate for rendering purposes
+		sub_viewport.add_child(dup)
 	var dream_bg : Node = get_tree().get_first_node_in_group("dream_bg")
-	# duplicate dream layer
-	var dup : Node2D = dream_layer.duplicate()
-	dream_layer.z_index = -1
-	dup.z_index = 0
-	# add dream duplicate for rendering purposes
-	sub_viewport.add_child(dup)
-	bg_viewport.add_child(dream_bg.duplicate(0b0111))
-	dream_bg.queue_free()
+	if dream_bg:
+		bg_viewport.add_child(dream_bg.duplicate(0b0111))
+		dream_bg.queue_free()
 	pivot_offset = size / 2
 	pos = global_position
 	disable()

@@ -7,6 +7,7 @@
 size = Vector2(32, 32)
 
 [node name="Door" type="Area2D" node_paths=PackedStringArray("collider")]
+z_index = 2
 collision_layer = 16384
 script = ExtResource("1_yi8r1")
 collider = NodePath("CollisionShape2D")

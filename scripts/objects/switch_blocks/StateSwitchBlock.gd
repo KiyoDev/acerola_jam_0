@@ -20,6 +20,7 @@ func _ready() -> void:
 
 
 func _on_state_changed() -> void:
+	GameManager.play_sfx("hit_block")
 	on = !on
 	print("%s[%s]=%s" % [name, switch_state, on])
 	sprite.animation = "on" if on else "off"

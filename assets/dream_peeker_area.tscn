@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://scripts/dream/DreamPeeker.gd" id="1_q0ghj"]
 
 [node name="SubViewportContainer" type="SubViewportContainer" node_paths=PackedStringArray("sub_viewport", "bg_viewport", "camera", "area", "collider")]
+z_index = 1
+z_as_relative = false
 offset_left = -32.0
 offset_top = -32.0
 offset_right = 32.0

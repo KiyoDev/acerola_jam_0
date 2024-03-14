@@ -35,11 +35,13 @@ animations = [{
 }]
 
 [node name="StateSwitchBlock" type="StaticBody2D"]
+z_index = 2
 collision_layer = 4
 script = ExtResource("1_mxuj7")
 on = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+z_index = 2
 shape = SubResource("RectangleShape2D_ccfjf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

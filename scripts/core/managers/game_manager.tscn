@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ghcndvp81aj5"]
+[gd_scene load_steps=13 format=3 uid="uid://ghcndvp81aj5"]
 
 [ext_resource type="Script" path="res://scripts/core/managers/GameManager.gd" id="1_vx3ts"]
 [ext_resource type="PackedScene" uid="uid://etae41uab7id" path="res://assets/transitions/circle_transition.tscn" id="2_7b1p4"]
@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://bvheengvsjenp" path="res://assets/ui/custom_font.tres" id="3_sankh"]
 [ext_resource type="Texture2D" uid="uid://bang7efyr7882" path="res://assets/art/door_white.png" id="4_poew8"]
 [ext_resource type="Texture2D" uid="uid://dhyo1iaoonm11" path="res://assets/art/gem.png" id="5_26wrp"]
+[ext_resource type="AudioStream" uid="uid://dv2y6gmt4asmu" path="res://assets/audio/incomplete.wav" id="7_62t13"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_h2faj"]
 shader = ExtResource("3_ansx1")
@@ -66,12 +67,16 @@ _data = {
 "fade_out": SubResource("Animation_v83ib")
 }
 
-[node name="Node" type="Node" node_paths=PackedStringArray("screen_transition", "transition_animator", "floor_label", "gem_label")]
+[node name="Node" type="Node" node_paths=PackedStringArray("screen_transition", "transition_animator", "ui", "floor_label", "gem_label", "audio", "player_audio", "music_player")]
 script = ExtResource("1_vx3ts")
 screen_transition = NodePath("screen_transition")
 transition_animator = NodePath("AnimationPlayer")
+ui = NodePath("Control")
 floor_label = NodePath("Control/VBoxContainer/floor_value")
 gem_label = NodePath("Control/gems")
+audio = NodePath("AudioStreamPlayer")
+player_audio = NodePath("AudioStreamPlayer2")
+music_player = NodePath("AudioStreamPlayer3")
 
 [node name="Control" type="Control" parent="."]
 z_index = 3
@@ -113,6 +118,17 @@ text = "Floor"
 [node name="floor_value" type="Label" parent="Control/VBoxContainer"]
 layout_mode = 2
 
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 409.0
+offset_top = 8.0
+offset_right = 473.0
+offset_bottom = 47.0
+text = "Jump:Z
+Grab:X
+Reset:R"
+horizontal_alignment = 2
+
 [node name="screen_transition" parent="." instance=ExtResource("2_7b1p4")]
 process_mode = 3
 z_index = 5
@@ -128,3 +144,10 @@ libraries = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="."]
+
+[node name="AudioStreamPlayer3" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_62t13")

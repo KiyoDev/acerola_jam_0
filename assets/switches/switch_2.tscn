@@ -188,6 +188,7 @@ _data = {
 }
 
 [node name="Switch" type="Area2D" node_paths=PackedStringArray("sprite", "collider")]
+z_index = 2
 collision_layer = 64
 script = ExtResource("1_aiy8j")
 switch_state = "switch_2"
@@ -195,6 +196,7 @@ sprite = NodePath("AnimatedSprite2D")
 collider = NodePath("CollisionShape2D")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+z_index = -1
 position = Vector2(0, 8)
 shape = SubResource("RectangleShape2D_lnv1r")
 
@@ -206,6 +208,7 @@ animation = &"off"
 collision_layer = 4
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="StaticBody2D"]
+z_index = -1
 shape = SubResource("RectangleShape2D_p7en4")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

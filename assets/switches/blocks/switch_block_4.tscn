@@ -34,6 +34,7 @@ animations = [{
 }]
 
 [node name="StateSwitchBlock" type="StaticBody2D"]
+z_index = 2
 collision_layer = 4
 script = ExtResource("1_2ssjv")
 switch_state = "switch_4"

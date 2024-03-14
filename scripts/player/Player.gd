@@ -118,6 +118,7 @@ func _unhandled_input(event : InputEvent) -> void:
 				body_collision.set_deferred("disabled", true)
 				velocity = Vector2.ZERO
 				
+				GameManager.play_sfx("next")
 				door.enter()
 	elif Input.is_action_just_pressed("hold") and interactable:
 		interactable._interact(self)
@@ -331,6 +332,7 @@ func jump(consumed : bool) -> bool:
 		velocity.y = (JUMP_VELOCITY - (velocity.y if coyote else 0)) * gravity_modifier()
 		animator.play(&"jump_up")
 		GameManager.player_jumped.emit()
+		GameManager.player_sfx("jump")
 		return true
 	return false
 
@@ -361,6 +363,7 @@ func buffered_jump() -> bool:
 			velocity.y = JUMP_VELOCITY * gravity_modifier()
 			animator.play(&"jump_up")
 			GameManager.player_jumped.emit()
+			GameManager.player_sfx("jump")
 	return false
 
 
@@ -411,6 +414,7 @@ func freeze() -> void:
 
 
 func do_death() -> void:
+	GameManager.player_sfx("death")
 	freeze()
 	dead = true
 	animator.play("death")
@@ -427,6 +431,7 @@ func _on_area_entered_body(area : Area2D) -> void:
 		do_death()
 	# collectible layer
 	elif area is Gem:
+		GameManager.play_sfx("gem")
 		area.collect()
 		collected_gem.emit()
 	# interactible layer

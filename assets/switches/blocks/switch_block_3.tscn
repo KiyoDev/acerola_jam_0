@@ -34,6 +34,7 @@ animations = [{
 }]
 
 [node name="StateSwitchBlock" type="StaticBody2D"]
+z_index = 2
 collision_layer = 4
 script = ExtResource("1_vutsh")
 switch_state = "switch_3"

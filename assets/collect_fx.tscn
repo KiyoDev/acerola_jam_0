@@ -60,6 +60,7 @@ animations = [{
 }]
 
 [node name="Sprite2D" type="AnimatedSprite2D"]
+z_index = 2
 sprite_frames = SubResource("SpriteFrames_pdq5a")
 autoplay = "default"
 frame = 6

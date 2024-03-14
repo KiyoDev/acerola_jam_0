@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dmtvgna60tqx3" path="res://assets/art/gate_frame.png" id="3_oel7x"]
 
 [node name="StaticBody2D" type="StaticBody2D" node_paths=PackedStringArray("sprite", "frame")]
+z_index = 2
 collision_layer = 4
 collision_mask = 5149
 script = ExtResource("1_ecx51")

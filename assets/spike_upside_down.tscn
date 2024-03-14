@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://cdbqb7l6bfe0a" path="res://assets/art/tileset_2.png" id="1_to2k4"]
 
 [node name="Area2D" type="Area2D"]
+z_index = 2
 collision_layer = 32768
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
